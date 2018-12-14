@@ -1,0 +1,111 @@
+-- Greg Stitt
+-- University of Florida
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.rgbmatrix.all;
+
+entity cnt is
+  port (
+		clk, rst: in  std_logic;
+        output  : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        valid   : out std_logic);
+end cnt;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- 1-process model examples
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+architecture PROC1_1 of cnt is
+
+    signal temp : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal v_temp : std_logic;
+	signal switch : std_logic_vector(10 downto 0);
+
+begin 
+  process(clk, rst)
+  begin
+    if (rst = '1') then
+      -- initialize outputs and state
+      temp <= X"00000000000F";
+      v_temp <= '0';
+	  switch <= (others => '0');
+    elsif(clk'event and clk = '1') then
+			if (unsigned(switch) < 64) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"00000F00000F";  --BLUE
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 128) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"000F00000F00"; --GREEN
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 192) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"0F00000F0000"; --RED
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 256) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"00000F00000F";  --BLUE
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 320) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"000F00000F00"; --GREEN
+			elsif (unsigned(switch) < 384) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"0F00000F0000"; --RED
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 448) then
+				  v_temp <= '1' xor v_temp;
+				  temp <= X"00000F00000F";  --BLUE
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 512) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"000F00000F00"; --GREEN
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 576) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"0F00000F0000"; --RED
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 640) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"00000F00000F";  --BLUE
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 704) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"000F00000F00"; --GREEN
+--			elsif (unsigned(switch) < 768) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"0F00000F0000"; --RED
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 832) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"00000F00000F";  --BLUE
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 896) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"000F00000F00"; --GREEN
+--			elsif (unsigned(switch) < 960) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"0F00000F0000"; --RED
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+--			elsif (unsigned(switch) < 1024) then
+--				  v_temp <= '1' xor v_temp;
+--				  temp <= X"00000F00000F";  --BLUE
+--				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+			elsif (unsigned(switch) < 2048) then
+				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
+				  temp <= X"000000000000"; 
+				  v_temp <= '1' xor v_temp;
+			else
+				  switch <= std_logic_vector(to_unsigned(0, 11));
+			end if;
+    end if;
+  end process;
+  valid <= v_temp;
+  output <= temp(DATA_WIDTH-1 downto 0);
+  --output <= X"100000000010"; --temp(DATA_WIDTH-1 downto 0);
+end PROC1_1;
+
