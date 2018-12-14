@@ -1,0 +1,51 @@
+set_location_assignment PIN_U7 -to lat
+set_location_assignment PIN_V14 -to r1
+set_location_assignment PIN_Y13 -to b1
+set_location_assignment PIN_U13 -to r2
+set_location_assignment PIN_R10 -to b2
+set_location_assignment PIN_Y10 -to a
+set_location_assignment PIN_W10 -to g1
+set_location_assignment PIN_T8 -to c
+set_location_assignment PIN_V8 -to g2
+set_location_assignment PIN_W7 -to clk_out
+set_location_assignment PIN_W6 -to b
+set_location_assignment PIN_V5 -to oe
+set_location_assignment PIN_G21 -to clk_in
+set_location_assignment PIN_H2 -to rst_n
+set_location_assignment PIN_V12 -to d
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name FAMILY "Cyclone III"
+set_global_assignment -name DEVICE EP3C16F484C6
+set_global_assignment -name TOP_LEVEL_ENTITY top_level
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 9.1
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:21:48  DECEMBER 09, 2018"
+set_global_assignment -name LAST_QUARTUS_VERSION 9.1
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name USE_GENERATED_PHYSICAL_CONSTRAINTS OFF -section_id eda_blast_fpga
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name NOMINAL_CORE_SUPPLY_VOLTAGE 1.2V
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
+set_global_assignment -name TIMEQUEST_DO_CCPP_REMOVAL ON
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name MISC_FILE "C:/Users/SamanthaSoto/Documents/UF/Academics/Spring 2019/Senior/rgbmatrix/top_level.dpf"
+set_global_assignment -name VHDL_FILE ../cnt.vhd
+set_global_assignment -name QIP_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name IP_TOOL_NAME "Virtual JTAG" -qip "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name IP_TOOL_VERSION 10.1 -qip "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.vhd" -qip "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name MISC_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag_inst.vhd" -qip "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name MISC_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.cmp" -qip "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.qip"
+set_global_assignment -name SOURCE_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.cmp"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/megawizard/megawizard_vjtag.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/clk_div.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/config.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/jtag_iface.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/ledctrl.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/memory.vhd"
+set_global_assignment -name VHDL_FILE "../rgbmatrix-fpga-master/vhdl/top_level.vhd"
