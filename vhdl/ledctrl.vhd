@@ -1,19 +1,19 @@
 -- Adafruit RGB LED Matrix Display Driver
 -- Finite state machine to control the LED matrix hardware
--- 
+--
 -- Copyright (c) 2012 Brian Nezvadovitz <http://nezzen.net>
 -- This software is distributed under the terms of the MIT License shown below.
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to
 -- deal in the Software without restriction, including without limitation the
 -- rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 -- sell copies of the Software, and to permit persons to whom the Software is
 -- furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Software.
--- 
+--
 -- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -53,11 +53,11 @@ end ledctrl;
 architecture bhv of ledctrl is
     -- Internal signals
     signal clk : std_logic;
-    
+
     -- Essential state machine signals
     type STATE_TYPE is (INIT, READ_PIXEL_DATA, INCR_RAM_ADDR, LATCH, INCR_LED_ADDR);
     signal state, next_state : STATE_TYPE;
-    
+
     -- State machine signals
     signal col_count, next_col_count : unsigned(IMG_WIDTH_LOG2 downto 0);
     signal bpp_count, next_bpp_count : unsigned(PIXEL_DEPTH-1 downto 0);
@@ -66,7 +66,7 @@ architecture bhv of ledctrl is
     signal s_rgb1, next_rgb1, s_rgb2, next_rgb2 : std_logic_vector(2 downto 0);
     signal s_oe, s_lat, s_clk_out : std_logic;
 begin
-    
+
     -- A simple clock divider is used here to slow down this part of the circuit
     U_CLKDIV : entity work.clk_div
         generic map (
@@ -78,7 +78,7 @@ begin
             clk_in => clk_in,
             clk_out => clk
         );
-    
+
     -- Breakout internal signals to the output port
     led_addr <= s_led_addr;
     addr <= s_ram_addr;
@@ -87,7 +87,7 @@ begin
     oe <= s_oe;
     lat <= s_lat;
     clk_out <= s_clk_out;
-    
+
     -- State register
     process(rst, clk)
     begin
@@ -109,7 +109,7 @@ begin
             s_rgb2 <= next_rgb2;
         end if;
     end process;
-    
+
     -- Next-state logic
     process(state, col_count, bpp_count, s_led_addr, s_ram_addr, s_rgb1, s_rgb2, data) is
         -- Internal breakouts
@@ -118,10 +118,10 @@ begin
         variable lower_r, lower_g, lower_b : unsigned(PIXEL_DEPTH-1 downto 0);
         variable r1, g1, b1, r2, g2, b2 : std_logic;
     begin
-        
+
         r1 := '0'; g1 := '0'; b1 := '0'; -- Defaults
         r2 := '0'; g2 := '0'; b2 := '0'; -- Defaults
-        
+
         -- Default register next-state assignments
         next_col_count <= col_count;
         next_bpp_count <= bpp_count;
@@ -129,16 +129,16 @@ begin
         next_ram_addr <= s_ram_addr;
         next_rgb1 <= s_rgb1;
         next_rgb2 <= s_rgb2;
-        
+
         -- Default signal assignments
         s_clk_out <= '0';
         s_lat <= '0';
         s_oe <= '1'; -- this signal is "active low"
-        
+
         -- States
         case state is
             when INIT =>
-                if(s_led_addr = "111") then
+                if(s_led_addr = "1111") then
                     if(bpp_count = unsigned(to_signed(-2, PIXEL_DEPTH))) then
                         next_bpp_count <= (others => '0');
                     else
@@ -189,7 +189,7 @@ begin
                 next_state <= INIT; -- restart state machine
             when others => null;
         end case;
-        
+
         -- Pixel data is given as 2 combined words, with the upper half containing
         -- the upper pixel and the lower half containing the lower pixel. Inside
         -- each half the pixel data is encoded in RGB order with multiple repeated
@@ -207,7 +207,7 @@ begin
         lower_b := lower(  PIXEL_DEPTH-1 downto 0);
         next_rgb1 <= r1 & g1 & b1;
         next_rgb2 <= r2 & g2 & b2;
-        
+
     end process;
-    
+
 end bhv;
