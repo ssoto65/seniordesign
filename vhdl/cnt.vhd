@@ -36,67 +36,67 @@ begin
     elsif(clk'event and clk = '1') then
 			if (unsigned(switch) < 64) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 128) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"000F00000F00"; --GREEN
+				  temp <= X"00FF0000FF00"; --GREEN
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 192) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"0F00000F0000"; --RED
+				  temp <= X"FA4616FA4616"; --ORANGE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 256) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 320) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"000F00000F00"; --GREEN
+				  temp <= X"00FF0000FF00"; --GREEN
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 384) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"0F00000F0000"; --RED
+				  temp <= X"FA4616FA4616"; --ORANGE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 448) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 512) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"000F00000F00"; --GREEN
+				  temp <= X"00FF0000FF00"; --GREEN
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 576) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"0F00000F0000"; --RED
+				  temp <= X"FA4616FA4616"; --ORANGE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 640) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 704) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"000F00000F00"; --GREEN
+				  temp <= X"00FF0000FF00"; --GREEN
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 768) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"0F00000F0000"; --RED
+				  temp <= X"FA4616FA4616"; --ORANGE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 832) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 896) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"000F00000F00"; --GREEN
+				  temp <= X"00FF0000FF00"; --GREEN
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 960) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"0F00000F0000"; --RED
+				  temp <= X"FA4616FA4616"; --ORANGE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 1024) then
 				  v_temp <= '1' xor v_temp;
-				  temp <= X"00000F00000F";  --BLUE
+				  temp <= X"0000FF0000FF";  --BLUE
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));
 			elsif (unsigned(switch) < 2048) then
 				  switch <= std_logic_vector(unsigned(switch) + to_unsigned(1, 11));

@@ -70,8 +70,8 @@ begin
     -- A simple clock divider is used here to slow down this part of the circuit
     U_CLKDIV : entity work.clk_div
         generic map (
-            clk_in_freq  => 50000000, -- 50MHz input clock
-            clk_out_freq => 10000000  -- 10MHz output clock
+            clk_in_freq  => 10, -- 50MHz input clock
+            clk_out_freq => 5  -- 10MHz output clock
         )
         port map (
             rst => rst,
