@@ -36,6 +36,8 @@ entity memory is
     port (
         rst    : in  std_logic;
         clk_wr : in  std_logic;
+		 -- wr_en	: in  std_logic;
+		 -- wr_addr : in std_logic_vector(ADDR_WIDTH-1 downto 0);
         input  : in  std_logic_vector(DATA_WIDTH-1 downto 0);
         clk_rd : in  std_logic;
         addr   : in  std_logic_vector(ADDR_WIDTH-1 downto 0);
@@ -56,13 +58,16 @@ begin
     next_waddr <= std_logic_vector( unsigned(waddr) + 1 );
     
     -- Write process for the memory
-    process(rst, clk_wr, next_waddr)
+    process(rst, clk_wr,next_waddr)
     begin
         if(rst = '1') then
             waddr <= (others => '0'); -- reset the write address to the beginning
         elsif(rising_edge(clk_wr)) then
-            ram_block(conv_integer(waddr)) <= input; -- store input at the current write address
-            waddr <= next_waddr; -- allow the write address to increment
+           ram_block(conv_integer(waddr)) <= input; -- store input at the current write address
+			  waddr <= next_waddr; -- allow the write address to increment
+--			 if(wr_en = '1') then
+--				ram_block(conv_integer(wr_addr)) <= input;
+--			 end if;
         end if;
     end process;
     
