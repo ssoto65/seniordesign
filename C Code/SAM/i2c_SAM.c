@@ -103,7 +103,7 @@ int who_am_I(void){
 		i2c_start(0x69,read);
 		int test = i2c_readNACK();
 		
-		return test 
+		return test;
 	///////////////////////////////////////////////
 		/*
 			if(test1 == 0x73){
@@ -113,13 +113,14 @@ int who_am_I(void){
 	*/
 }
 
-
+/*
 int read_register(uint8_t register){
+	
 	REG_TWI0_IADR = register;
 	i2c_start(0x69,read);
 	
 	int data = i2c_readNACK();
 	
-	return data
+	return data;
 }
-
+*/

@@ -16,6 +16,6 @@ void slaveselect(void);
 void slavedeselect(void);
 void flirReset_assert(void);
 void flirReset_deassert(void);
-uint8_t SPI_byteExchange(uint8_t data);
+uint8_t SPI_byteExchange(uint16_t data);
 
 #endif
