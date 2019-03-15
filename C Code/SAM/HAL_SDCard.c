@@ -70,9 +70,9 @@ void SDCard_init(void)
 	REG_PMC_PCER0 |= PMC_PCER0_PID21;
 	
 	//SS
-	 REG_PIOA_PER |= PIO_PER_P31; //set PA30 as controllable by the PIO controller (disable peripheral)
-	 REG_PIOA_OER |= PIO_OER_P31; //set PA30 as output
-	 REG_PIOA_SODR |= PIO_PER_P31; //set output high on pin PA11 (CS0)
+	 REG_PIOA_PER |= PIO_PER_P16; //set PA31 as controllable by the PIO controller (disable peripheral)
+	 REG_PIOA_OER |= PIO_OER_P16; //set PA31 as output
+	 REG_PIOA_SODR |= PIO_PER_P16; //set output high on pin PA31 (CS0)
 		
 	//Disable pins from PIO
 	//REG_PIOA_PDR |= PIO_PDR_P11 | PIO_PDR_P12 | PIO_PDR_P13 | PIO_PDR_P14;
@@ -90,7 +90,7 @@ void SDCard_init(void)
 	SPI_setMode(0);
 	//set clock generator (1 = peripheral clock rate), otherwise a divisor
 	//SCBR = fperipheral clock / SPCK Bit Rate
-	REG_SPI_CSR |= SPI_CSR_SCBR(8);
+	REG_SPI_CSR |= SPI_CSR_SCBR(25);
 	//REG_SPI_CSR |= SPI_CSR_DLYBCT(4);
 	//REG_SPI_CSR |= SPI_CSR_DLYBS(4);
 	//chip select remains low after transfer
@@ -206,7 +206,7 @@ void SDCard_sendFrame(uint8_t *pBuffer, uint16_t size)
 void SDCard_setCSHigh(void)
 {
     //SD_CS_OUT |= SD_CS;
-	REG_PIOA_SODR |= PIO_PER_P31; //set output high on pin PA11 (CS0)
+	REG_PIOA_SODR |= PIO_PER_P16; //set output high on pin PA11 (CS0)
 }
 
 /***************************************************************************//**
@@ -218,7 +218,7 @@ void SDCard_setCSHigh(void)
 void SDCard_setCSLow(void)
 {
     //SD_CS_OUT &= ~SD_CS;
-	REG_PIOA_CODR |= PIO_PER_P31; //set output low on pin PA11 (CS0)
+	REG_PIOA_CODR |= PIO_PER_P16; //set output low on pin PA11 (CS0)
 }
 
 /***************************************************************************//**

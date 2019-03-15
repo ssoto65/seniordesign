@@ -1,6 +1,7 @@
 #include "sam.h"
 #include "i2c_SAM.h"
 
+
 void i2c_init(void){
     //enable i2c peripheral in PMC
     REG_PMC_PCER0 |= PMC_PCER0_PID19;
@@ -23,8 +24,8 @@ void i2c_init(void){
 			
     //clockwave form 100khz - 196, 400khz - 46, when fperipheral is 20MHz
 	//REG_TWI0_CWGR |= TWI_CWGR_CKDIV(0);
-    REG_TWI0_CWGR |= TWI_CWGR_CLDIV(3); //3
-    REG_TWI0_CWGR |= TWI_CWGR_CHDIV(3); //3 
+    REG_TWI0_CWGR |= TWI_CWGR_CLDIV(121); //3
+    REG_TWI0_CWGR |= TWI_CWGR_CHDIV(121); //3 
     //formula tlow = ((CLDIV x 2^CKDIV)+4)xTper;
     //1/100,000 = ((CLDIV x 2^0)+4)x1/20,000,000;
 	

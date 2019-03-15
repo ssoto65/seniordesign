@@ -15,8 +15,6 @@ void i2c_writeLastByte(uint8_t data);
 void i2c_write(uint8_t data);
 int who_am_I(void);
 int read_register(uint8_t register);
-
-volatile unsigned long *data_addr = 0x60000000;
-
+void accel_data(void);
 
 #endif /* I2C_DRIVER_H_ */

@@ -26,15 +26,15 @@ UINT read;                                              /* Read bytes object  */
 unsigned char MST_Data,SLV_Data;
 BYTE buffer[32];
 int result=1;
-
+/*
 int main(void)
 {
 	UINT TEST[1] = {0};
 	volatile UINT cnt;
 	volatile UINT readTest[15];
-	/* Initialize the SAM system */
+	// Initialize the SAM system 
 	SystemInit();
-	
+	//clock_init();
 	fat_init();                                 //mount, set directory to read from, assign file
 	unsigned int bytesWritten;
 	
@@ -51,12 +51,14 @@ int main(void)
 	errCode = f_mount(0,0);
 	while(1);
 	
-	/* Replace with your application code */
+	// Replace with your application code
 	while (1)
 	{
 		
 	}
 }
+
+
 
 void fat_init(void){
 	errCode = -1;
@@ -72,3 +74,4 @@ void fat_init(void){
 		f_close(&file);
 	}
 }
+*/
