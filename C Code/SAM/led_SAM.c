@@ -57,6 +57,7 @@ void clear_matrix(void){
 
 void ebi_init(void){
 	
+	REG_PMC_PCER0 |= PMC_PCER0_PID10 + PMC_PCER0_PID11 + PMC_PCER0_PID12 + PMC_PCER0_PID13;
 	//Disable Pins from PDIO
 	
 	//REG_PIOC_WPMR = PIO_WPMR_WPKEY(PIO_WPMR_WPKEY_PASSWD);

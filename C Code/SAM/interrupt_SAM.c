@@ -1,10 +1,7 @@
 #include "sam.h"
+#include "interrupt_SAM.h"
 
-int main(void)
-{
-	SystemInit();
-	//clock_init();
-	
+void interrupt_init(void){
 	//enable clock for PIOA
 	REG_PMC_PCER0 |= PMC_PCER0_PID11;
 	
@@ -32,11 +29,6 @@ int main(void)
 	REG_PIOA_IER |= PIO_IER_P23;
 	//enable PIOA interrupts
 	NVIC_EnableIRQ(PIOA_IRQn);
-	
-	while (1)
-	{
-		//the program will loop here until an interrupt is triggered
-	}
 }
 
 //when PIOA interrupt is triggered this block of code will run

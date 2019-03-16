@@ -48,6 +48,24 @@ void printString(const char myString[]) {
 	}
 }
 
+void UART1_Handler(void) {
+	// when we receive a byte, transmit that byte back
+	uint32_t status = REG_UART1_SR;
+	if ((status & UART_SR_RXRDY)){
+		//read receive holding register
+		uint8_t readByte = REG_UART1_RHR;
+		//transmit that byte back
+		//transmitByte(readByte);
+		if (readByte == 0x37){
+			REG_PIOA_SODR |= PIO_PER_P21; //set PA11 high (LED on)
+		}
+		else if (readByte == 0x44){
+			REG_PIOA_CODR |= PIO_PER_P21; //set PA11 low (LED Off)
+		}
+		
+	}
+}
+
 //Example code
 /* int main(void)
 {

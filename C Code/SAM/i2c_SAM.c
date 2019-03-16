@@ -1,6 +1,10 @@
 #include "sam.h"
 #include "i2c_SAM.h"
 
+volatile int8_t dataready = 0;
+volatile int16_t accel_x = 0;
+volatile int16_t accel_y = 0;
+volatile int16_t accel_z = 0;
 
 void i2c_init(void){
     //enable i2c peripheral in PMC
@@ -125,3 +129,33 @@ int read_register(uint8_t register){
 	return data;
 }
 */
+
+
+void accel_data(void){
+	while(!dataready){
+		REG_TWI0_IADR = 58; //Reading Status Register
+		i2c_start(0x69,read);
+		dataready = i2c_readNACK();
+	}
+	
+	REG_TWI0_IADR = 59; //Reading XH
+	i2c_start(0x69,read);
+	accel_x = (i2c_readNACK() << 8);
+	REG_TWI0_IADR = 60; //Reading XL
+	i2c_start(0x69,read);
+	accel_x |= i2c_readNACK();
+	
+	REG_TWI0_IADR = 61; //Reading YH
+	i2c_start(0x69,read);
+	accel_y = (i2c_readNACK() << 8);
+	REG_TWI0_IADR = 62; //Reading YL
+	i2c_start(0x69,read);
+	accel_y |= i2c_readNACK();
+	
+	REG_TWI0_IADR = 63; //Reading ZH
+	i2c_start(0x69,read);
+	accel_z = (i2c_readNACK() << 8);
+	REG_TWI0_IADR = 64; //Reading ZL
+	i2c_start(0x69,read);
+	accel_z |= i2c_readNACK();
+}
