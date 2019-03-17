@@ -10,8 +10,8 @@
 #include "led_SAM.h"
 #include "i2c_SAM.h"
 
-#define BAM 0
-extern volatile uint8_t game;
+//#define BAM 0
+//extern volatile uint8_t game;
 
 uint8_t xPos;
 uint8_t yPos;
@@ -53,7 +53,7 @@ int bam_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
 
 void bam_play(void){
-	game = BAM;
+	//game = BAM;
 	bam_screen_load();
 	bam_init_ball();
 	

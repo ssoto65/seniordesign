@@ -11,7 +11,9 @@
 #include "tcc_SAM.h"
 #include "uart_SAM.h"
 
-volatile uint8_t game;
+#define BAM 0
+#define BB 1
+extern volatile uint8_t game;
 
 int main(void)
 {
@@ -22,11 +24,10 @@ int main(void)
 	interrupt_init(); //Pin 24/PA20 (LED) | Pin 22/PA23 (Int Button)
 	i2c_init(); //Pin 66/PA3(SDA) | Pin 55/PA4(SCK)
 	clk_out(); //init for EBI uP clk // Pin 52/PA6(uP clk)
-	//UART_Init(); //Pin 7/PB2(RX) | Pin 9/PB3(TX)
+	UART_Init(); //Pin 7/PB2(RX) | Pin 9/PB3(TX)
 	ebi_init();
 	timerInit();
 	//NVIC_DisableIRQ(PIOA_IRQn);
-	//NVIC_EnableIRQ(UART1_IRQn);
 	//SD Card // Pin 28/PA16(SS) | Pin 31/PA14(SPCK) | Pin 33/PA13(MOSI) | Pin 41/PA12(MISO) 
 	//__disable_irq();                       
 	//__DMB();    
@@ -42,12 +43,19 @@ int main(void)
 	//enable glitch filter on PA24 (button debounce)
 	REG_PIOA_IFER |= PIO_IFER_P24;
 	
-	
+	//clear_matrix();
 	//bb_play();
-	bam_play();
+	//bam_play();
 	
 	while (1)
 	{
-		
+		if (game == BAM){
+			bam_play();
+			while(game == BAM);
+		}
+		else if (game == BB){
+			bb_play();
+			while (game == BB);
+		}
 	}
 }

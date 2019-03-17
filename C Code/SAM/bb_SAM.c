@@ -15,10 +15,15 @@
 #define Up 0
 #define Down 1
 
-#define BB 1
-extern volatile uint8_t game;
+//#define BB 1
+//extern volatile uint8_t game;
 
-volatile uint8_t barIndex = 13;
+#define paddleLEFT 1
+#define paddleRIGHT 2
+
+extern volatile uint8_t paddleDir;
+volatile uint8_t paddleIdx = 13;
+
 volatile int LeftOrRight = 0; //left = 0, right =1
 volatile int UpOrDown = 0; //up= 0, down=1
 uint8_t xPos = 30;
@@ -59,7 +64,7 @@ int bb_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 
 void bb_play(void){
 	
-	game = BB;
+	//game = BB;
 	
 	bb_screen_load();
 	bb_init_ball();
@@ -67,6 +72,44 @@ void bb_play(void){
 	
 	//start our TC0
 	REG_TC0_CCR0 |= TC_CCR_SWTRG;
+}
+
+void paddleRefresh(void){
+	if(paddleDir == paddleRIGHT){
+		paddleDir = 0;
+		if (paddleIdx+4 != 28){
+			set_LED(31,paddleIdx,0x00);
+			set_LED(31,paddleIdx+1,0x00);
+			set_LED(31,paddleIdx+2,0x00);
+			set_LED(31,paddleIdx+3,0x00);
+			set_LED(31,paddleIdx+4,0x00);
+		
+			paddleIdx++;
+			set_LED(31,paddleIdx,0x0000FF00);
+			set_LED(31,paddleIdx+1,0x0000FF00);
+			set_LED(31,paddleIdx+2,0x0000FF00);
+			set_LED(31,paddleIdx+3,0x0000FF00);
+			set_LED(31,paddleIdx+4,0x0000FF00);
+		}
+	}
+	else if(paddleDir == paddleLEFT){
+		paddleDir = 0;
+		if (paddleIdx != 3){
+			set_LED(31,paddleIdx,0x00);
+			set_LED(31,paddleIdx+1,0x00);
+			set_LED(31,paddleIdx+2,0x00);
+			set_LED(31,paddleIdx+3,0x00);
+			set_LED(31,paddleIdx+4,0x00);
+			
+			paddleIdx--;
+			set_LED(31,paddleIdx,0x0000FF00);
+			set_LED(31,paddleIdx+1,0x0000FF00);
+			set_LED(31,paddleIdx+2,0x0000FF00);
+			set_LED(31,paddleIdx+3,0x0000FF00);
+			set_LED(31,paddleIdx+4,0x0000FF00);
+		}
+			
+	}
 }
 
 void ballRefresh(void){
@@ -82,11 +125,23 @@ void ballRefresh(void){
 	
 	//Check Row boundaries
 	if (xPos == 30){
-		if ((xPos+1 >= barIndex) && (xPos+1 <= barIndex+5)){
+		if ((yPos+1 >= paddleIdx) && (yPos+1 <= paddleIdx+5)){
 			UpOrDown = Up;
 		}
 		else{
 			//endGame();
+			//restart paddle
+			set_LED(31,paddleIdx,0x00);
+			set_LED(31,paddleIdx+1,0x00);
+			set_LED(31,paddleIdx+2,0x00);
+			set_LED(31,paddleIdx+3,0x00);
+			set_LED(31,paddleIdx+4,0x00);
+			bb_init_paddle();
+			
+			//restart Ball
+			xPos = 30;
+			yPos = 15;
+			
 			UpOrDown = Up;
 		}
 	}
@@ -183,10 +238,10 @@ void bb_init_ball(void){
 
 void bb_init_paddle(void){
 	//Initialize paddle
-	barIndex = 13;
-	set_LED(31,barIndex,0x0000FF00);
-	set_LED(31,barIndex+1,0x0000FF00);
-	set_LED(31,barIndex+2,0x0000FF00);
-	set_LED(31,barIndex+3,0x0000FF00);
-	set_LED(31,barIndex+4,0x0000FF00);
+	paddleIdx = 13;
+	set_LED(31,paddleIdx,0x0000FF00);
+	set_LED(31,paddleIdx+1,0x0000FF00);
+	set_LED(31,paddleIdx+2,0x0000FF00);
+	set_LED(31,paddleIdx+3,0x0000FF00);
+	set_LED(31,paddleIdx+4,0x0000FF00);
 }

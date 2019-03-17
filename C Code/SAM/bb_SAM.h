@@ -14,5 +14,6 @@ void bb_screen_load(void);
 void bb_init_ball(void);
 void bb_init_paddle(void);
 void ballRefresh(void);
+void paddleRefresh(void);
 
 #endif /* BB_H_ */

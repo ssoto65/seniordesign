@@ -51,10 +51,11 @@ void TC0_Handler(void){
 		//reset counter
 		counter=0;
 		if (game == BAM){
-			mazerefresh();			
+			mazerefresh();	
 		}
 		else if (game == BB){
 			ballRefresh();
+			paddleRefresh();
 		}
 	}
 }

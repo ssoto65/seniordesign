@@ -1,5 +1,21 @@
 #include "sam.h"
 #include "uart_SAM.h"
+#include "led_SAM.h"
+
+#define buttonUP 1
+#define buttonDOWN 2
+#define buttonLEFT 3
+#define buttonRIGHT 4
+#define buttonA 5
+#define buttonB 6
+
+#define paddleLEFT 1
+#define paddleRIGHT 2
+volatile uint8_t paddleDir = 0;
+
+#define BAM 0
+#define BB 1
+volatile uint8_t game;
 
 void UART_Init(){
 	//configure PIO controller A  - disable means enable peripheral on pins
@@ -30,6 +46,8 @@ void UART_Init(){
 	
 	//enable interrupt on receive
 	REG_UART1_IER |= UART_IER_RXRDY;
+	
+	NVIC_EnableIRQ(UART1_IRQn);
 }
 
 void transmitByte(uint8_t data){
@@ -53,16 +71,31 @@ void UART1_Handler(void) {
 	uint32_t status = REG_UART1_SR;
 	if ((status & UART_SR_RXRDY)){
 		//read receive holding register
-		uint8_t readByte = REG_UART1_RHR;
+		volatile uint8_t readByte = REG_UART1_RHR;
 		//transmit that byte back
 		//transmitByte(readByte);
-		if (readByte == 0x37){
-			REG_PIOA_SODR |= PIO_PER_P21; //set PA11 high (LED on)
+		if (readByte == buttonUP){
+			//set_LED(1,0,0x00FFFFFF); //for debug
 		}
-		else if (readByte == 0x44){
-			REG_PIOA_CODR |= PIO_PER_P21; //set PA11 low (LED Off)
+		else if (readByte == buttonDOWN){
+			//set_LED(2,0,0x00FFFFFF); //for debug
 		}
-		
+		else if (readByte == buttonLEFT){
+			//set_LED(3,0,0x00FFFFFF); //for debug
+			paddleDir = paddleLEFT;
+		}
+		else if (readByte == buttonRIGHT){
+			//set_LED(4,0,0x00FFFFFF); //for debug
+			paddleDir = paddleRIGHT;
+		}
+		else if (readByte == buttonA){
+			//set_LED(5,0,0x00FFFFFF); //for debug
+			game = BAM;
+		}
+		else if (readByte == buttonB){
+			game = BB;
+			//set_LED(6,0,0x00FFFFFF); //for debug
+		}
 	}
 }
 
