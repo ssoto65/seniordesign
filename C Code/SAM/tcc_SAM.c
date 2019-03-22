@@ -18,6 +18,8 @@ volatile uint32_t counter = 0;
 extern volatile uint8_t game;
 
 void timerInit(){
+	
+	NVIC_SetPriority(TC0_IRQn,7);
 	//Setup for TC0 - ID 23, TIOA0 - PA0 peripheral B
 	//enable interrupts in NVIC for TC0
 	NVIC_EnableIRQ(TC0_IRQn);
@@ -33,6 +35,7 @@ void timerInit(){
 	REG_TC0_IER0 |= TC_IER_COVFS;
 	//enable tc clock
 	REG_TC0_CCR0 |= TC_CCR_CLKEN;
+
 	
 	//PIO setup (not neccessary) because we won't use the pins
 }

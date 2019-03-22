@@ -23,12 +23,15 @@ void clock_init(void){
 	while (!(REG_PMC_SR & PMC_SR_MCKRDY));
 	//select processer prescaler (0 - no divisor)
 	REG_PMC_MCKR |= PMC_MCKR_PRES_CLK_1;
+	
 	//select processer prescaler (div 4) 20mhz/4 = 5mhz
 	//REG_PMC_MCKR |= PMC_MCKR_PRES_CLK_4;
 	//wait until main clock ready
 	while (!(REG_PMC_SR & PMC_SR_MCKRDY));
 	
-	//12MHz / 6 = 3MHz, 3MHz * (9+1) = 30MHz
+	REG_CKGR_PLLBR |= CKGR_PLLBR_PLLBCOUNT(60);
+	
+	//12MHz / 6 = 2MHz, 2MHz * (24+1) = 50MHz
 	REG_CKGR_PLLBR |= CKGR_PLLBR_MULB(24);
 	REG_CKGR_PLLBR |= CKGR_PLLBR_DIVB(6);
 

@@ -47,7 +47,10 @@ void UART_Init(){
 	//enable interrupt on receive
 	REG_UART1_IER |= UART_IER_RXRDY;
 	
+	NVIC_SetPriority (UART1_IRQn,1);
+	
 	NVIC_EnableIRQ(UART1_IRQn);
+	
 }
 
 void transmitByte(uint8_t data){

@@ -43,13 +43,15 @@ void set_LED(int row, int column, unsigned long data){
 	
 
 	*(address + address_start) = data;
-
+	
+	for(int ii=0; ii<50;ii++){
+		asm("nop");}
 	
 }
 
 void clear_matrix(void){
-	for (int i = 0; i<32; i++){
-		for(int j = 0; j<32; j++){
+	for (int i = 0; i<=31; i++){
+		for(int j = 0; j<=31; j++){
 			set_LED(i,j,0);
 		}
 	}
