@@ -17,15 +17,28 @@
 #define BB 1
 extern volatile uint8_t game;
 
+#define buttonUP 1
+#define buttonDOWN 2
+#define buttonLEFT 3
+#define buttonRIGHT 4
+#define buttonA 5
+#define buttonB 6
+
+#define paddleLEFT 1
+#define paddleRIGHT 2
+
+extern volatile  uint8_t upDown;
+extern volatile uint8_t AorB;
+extern volatile uint8_t bam_WinOrLose;
+extern volatile uint8_t bb_WinOrLose;
+
 
 int main(void)
 {
-	
-	int *REG_SCB_ACTLR = 0xE000E008;
-	*REG_SCB_ACTLR = 0x10;
+
 	SystemInit();
 	REG_WDT_MR |= WDT_MR_WDDIS;
-	//clock_init();
+	clock_init();
 	DAC_init(); //Pin 93/PB13 (DAC Output)
 	interrupt_init(); //Pin 24/PA20 (LED) | Pin 22/PA23 (Int Button)
 	i2c_init(); //Pin 66/PA3(SDA) | Pin 55/PA4(SCK)
@@ -53,20 +66,52 @@ int main(void)
 	//bb_play();
 	//bam_play();
 	
-
-	
-	
-	while (1)
-	{
-		
+	while(1){
+		while(AorB != buttonA){
+			if (game == BB){
+				display_menu_bb();
+			}else{
+				display_menu_bam();
+			}
+			
+			if(upDown == buttonUP){
+				game = BB;
+			}
+			else if(upDown == buttonDOWN){
+				game = BAM;
+			}
+		}	
+			
 		if (game == BAM){
 			bam_play();
-			while(game == BAM);
+			while(bam_WinOrLose == 37);
+			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			if (bam_WinOrLose == 0){
+				display_lose();
+				while(AorB != buttonB);
+			}
+			else{
+				display_win();
+				while(AorB != buttonB);
+			}
 		}
+		
 		else if (game == BB){
 			bb_play();
-			while (game == BB);
+			while (bb_WinOrLose == 37);
+			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			if (bb_WinOrLose == 0){
+				display_lose();
+				while(AorB != buttonB);
+			}
+			else{
+				display_win();
+				while(AorB != buttonB);
+			}
 		}
+	
+		
+		//Win or lose
 		
 	}
 }

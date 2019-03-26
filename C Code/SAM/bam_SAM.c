@@ -19,6 +19,10 @@ extern volatile int16_t accel_x;
 extern volatile int16_t accel_y;
 extern volatile int16_t accel_z;
 
+#define lose 0
+#define win 1
+volatile uint8_t bam_WinOrLose;
+
 int bam_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 {1,0,0,1,0,0,0,0,0,0,0,0,1,0,2,0,0,2,0,0,0,0,2,0,0,3,0,0,0,2,0,1},
 {1,0,0,1,0,0,0,0,0,0,0,0,1,2,2,2,2,2,2,0,0,0,2,0,3,3,3,0,2,2,2,1},
@@ -57,7 +61,11 @@ void bam_play(void){
 	bam_screen_load();
 	bam_init_ball();
 	
+	bam_WinOrLose = 37;
+	
 	//start our TC0
+	REG_TC0_CCR0 &= ~TC_CCR_CLKDIS;
+	REG_TC0_CCR0 |= TC_CCR_CLKEN;
 	REG_TC0_CCR0 |= TC_CCR_SWTRG;
 }
 
@@ -97,8 +105,10 @@ void mazerefresh(void){
 			set_LED(xPos,yPos,0x00);
 			set_LED(--xPos,yPos,0x00FFFFFF);
 		}else if((bam_level_one[xPos-1][yPos] == 2)){
-			set_LED(xPos,yPos,0x00);
-			set_LED(1,1,0x00FFFFFF);
+			bam_WinOrLose = lose;
+		}
+		else if ((bam_level_one[xPos-1][yPos] == 3)){
+			bam_WinOrLose = win;
 		}
 	}
 	//LEFT
@@ -107,10 +117,11 @@ void mazerefresh(void){
 			set_LED(xPos,yPos,0x00);
 			set_LED(++xPos,yPos,0x00FFFFFF);
 		}else if((bam_level_one[1+xPos][yPos] == 2)){
-			set_LED(xPos,yPos,0x00);
-			xPos =1;
-			yPos =1;
+			bam_WinOrLose = lose;
 		}		
+		else if ((bam_level_one[1+xPos][yPos] == 3)){
+			bam_WinOrLose = win;
+		}
 	}
 	//DOWN
 	else if( (accel_y > -850) && (accel_y < 850) && (accel_x < -700)){
@@ -118,20 +129,26 @@ void mazerefresh(void){
 			set_LED(xPos,yPos,0x00);
 			set_LED(xPos,++yPos,0x00FFFFFF);
 		}else if((bam_level_one[xPos][1+yPos] == 2)){
-			set_LED(xPos,yPos,0x00);
-			xPos =1;
-			yPos =1;
+			bam_WinOrLose = lose;
+		}
+		//Green
+		else if((bam_level_one[xPos][1+yPos] == 3)){
+			bam_WinOrLose = win;
 		}
 	}
 	//UP
 	else if( (accel_y > -850) && (accel_y < 850) && (accel_x > 650)){
+		//Empty Space
 		if((bam_level_one[xPos][yPos-1] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(xPos,--yPos,0x00FFFFFF);
+		//Red
 		}else if((bam_level_one[xPos][yPos-1] == 2) ){
-			set_LED(xPos,yPos,0x00);
-			xPos =1;
-			yPos =1;
+			bam_WinOrLose = lose;
 		}
-	}
+		//Green
+		else if((bam_level_one[xPos][yPos-1] == 3) ){
+			bam_WinOrLose = win;			
+		}
+		}
 }

@@ -11,7 +11,12 @@
 
 #define paddleLEFT 1
 #define paddleRIGHT 2
+
+volatile uint8_t upDown = 0;
+volatile uint8_t AorB = 0;
+
 volatile uint8_t paddleDir = 0;
+
 
 #define BAM 0
 #define BB 1
@@ -79,9 +84,12 @@ void UART1_Handler(void) {
 		//transmitByte(readByte);
 		if (readByte == buttonUP){
 			//set_LED(1,0,0x00FFFFFF); //for debug
+			upDown = buttonUP;
 		}
 		else if (readByte == buttonDOWN){
 			//set_LED(2,0,0x00FFFFFF); //for debug
+			
+			upDown = buttonDOWN;
 		}
 		else if (readByte == buttonLEFT){
 			//set_LED(3,0,0x00FFFFFF); //for debug
@@ -93,11 +101,14 @@ void UART1_Handler(void) {
 		}
 		else if (readByte == buttonA){
 			//set_LED(5,0,0x00FFFFFF); //for debug
-			game = BAM;
+			//game = BAM;
+			
+			AorB = buttonA;
 		}
 		else if (readByte == buttonB){
-			game = BB;
+			//game = BB;
 			//set_LED(6,0,0x00FFFFFF); //for debug
+			AorB = buttonB;
 		}
 	}
 }
@@ -105,7 +116,7 @@ void UART1_Handler(void) {
 //Example code
 /* int main(void)
 {
-Initialize the SAM system 
+Initialize the SAM system
 SystemInit();
 UART_Init();
 NVIC_EnableIRQ(UART1_IRQn);

@@ -11,3 +11,7 @@ void set_LED(int row, int column, unsigned long data);
 void clear_matrix(void);
 void ebi_init(void);
 void clk_out(void);
+void display_menu_bb(void);
+void display_menu_bam(void);
+void display_lose(void);
+void display_win(void);
