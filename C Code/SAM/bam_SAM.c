@@ -72,7 +72,7 @@ void bam_play(void){
 void bam_screen_load(void){
 	
 	clear_matrix();
-	for(int i=0; i < 50; i++){
+	//for(int i=0; i < 50; i++){
 		for(int ii = 0; ii < 32; ii++){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
@@ -85,9 +85,12 @@ void bam_screen_load(void){
 				else if(bam_level_one[ii][jj]== 3){
 					set_LED(ii,jj,0x00FF00);
 				}
+				else{
+					set_LED(ii,jj,0);
+				}
 			}
 		}
-	}
+	//}
 }
 
 void bam_init_ball(void){

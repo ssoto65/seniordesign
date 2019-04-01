@@ -170,7 +170,7 @@ void ballRefresh(void){
 		}
 		else{
 			//endGame();
-			/*
+			
 			//restart paddle
 			set_LED(31,paddleIdx,0x00);
 			set_LED(31,paddleIdx+1,0x00);
@@ -184,7 +184,7 @@ void ballRefresh(void){
 			yPos = 15;
 			
 			UpOrDown = Up;
-			*/
+			
 			bb_WinOrLose = lose;
 		}
 	}
@@ -247,6 +247,20 @@ void ballRefresh(void){
 		}
 	}
 	
+	volatile int red_found = 0;
+	
+	for(int ii = 0; ii <32; ii++){
+		for(int jj = 0; jj <32; jj++){
+			if(bb_level_one[ii][jj] == 2){
+				red_found = 1;
+			}
+		}
+	}
+	
+	if(red_found == 0 ){
+		bb_WinOrLose = win;
+	}
+	
 	//Update ball location
 	set_LED(xPos,yPos,0x00FFFFFF);
 }
@@ -254,7 +268,7 @@ void ballRefresh(void){
 void bb_screen_load(void){
 	
 	clear_matrix();
-	for(int i=0; i < 50; i++){
+	//for(int i=0; i < 50; i++){
 		for(int ii = 0; ii < 32; ii++){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
@@ -268,9 +282,12 @@ void bb_screen_load(void){
 				else if(bb_level_one_OG[ii][jj]== 3){
 					set_LED(ii,jj,0x00FF00);
 				}
+				else{
+					set_LED(ii,jj,0);
+				}
 			}
 		}
-	}
+	//}
 }
 
 void bb_init_ball(void){
