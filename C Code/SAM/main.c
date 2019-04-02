@@ -84,37 +84,55 @@ int main(void)
 	//SD Card // Pin 28/PA16(SS) | Pin 31/PA14(SPCK) | Pin 33/PA13(MOSI) | Pin 41/PA12(MISO) 
 	__enable_irq();                       
 	//__DMB();    
+	//interrupt_init();
 	
-	
-	//set PA24 as controllable by the PIO controller (disable peripheral)
-	REG_PIOA_PER |= PIO_PER_P24;
-	//output disable register (set as input for button)
-	REG_PIOA_ODR |= PIO_ODR_P24;
-	//disable pull down
-	REG_PIOA_PPDDR |= PIO_PPDDR_P24;
-	//enable internal pull up resistor on PA24
-	REG_PIOA_PUER |= PIO_PUER_P24;
-	//enable glitch filter on PA24 (button debounce)
-	REG_PIOA_IFER |= PIO_IFER_P24;
 	//clear_matrix();
 	//bb_play();
 	//bam_play();
 	
 	while(1){
+		//while(AorB != buttonA){
+		//while(1){
+			//if (game == BB){
+				//display_menu_bb();
+				//game = BB;
+				//while(upDown != buttonDOWN);
+			//}else{
+				
+				//display_menu_bam();
+				//game = BAM;
+				//while(upDown != buttonUP);
+				
+			//}
+			
+			//if(upDown == buttonUP){
+				//game = BB;
+			//}
+			//else if(upDown == buttonDOWN){
+				//game = BAM;
+			//}
+		//}	
+		
 		while(AorB != buttonA){
 			if (game == BB){
 				display_menu_bb();
-			}else{
-				display_menu_bam();
-			}
-			
-			if(upDown == buttonUP){
-				game = BB;
-			}
-			else if(upDown == buttonDOWN){
 				game = BAM;
+				while(!(upDown == buttonDOWN)){
+					if (AorB == buttonA) {
+						game = BB;
+						 break;}
+				}
+				}else{
+				display_menu_bam();
+				game = BB;
+				while(!(upDown == buttonUP)){
+					if (AorB == buttonA) {
+						game = BAM;
+						break;
+					}
+				}
 			}
-		}	
+		}
 			
 		if (game == BAM){
 			bam_play();

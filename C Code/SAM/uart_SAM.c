@@ -12,11 +12,15 @@
 #define paddleLEFT 1
 #define paddleRIGHT 2
 
+#define wireless_on 1
+#define wireless_off 0 
+
+volatile uint32_t wireless_mode = 0;
+
 volatile uint8_t upDown = 0;
 volatile uint8_t AorB = 0;
 
 volatile uint8_t paddleDir = 0;
-
 
 #define BAM 0
 #define BB 1
@@ -77,37 +81,75 @@ void printString(const char myString[]) {
 void UART1_Handler(void) {
 	// when we receive a byte, transmit that byte back
 	uint32_t status = REG_UART1_SR;
-	if ((status & UART_SR_RXRDY)){
-		//read receive holding register
-		volatile uint8_t readByte = REG_UART1_RHR;
-		//transmit that byte back
-		//transmitByte(readByte);
-		if (readByte == buttonUP){
-			//set_LED(1,0,0x00FFFFFF); //for debug
+	
+	wireless_mode = (REG_PIOA_PDSR & PIO_PDSR_P29);
+	
+	if((wireless_mode >> 29) == wireless_on){
+	
+		if ((status & UART_SR_RXRDY)){
+			//read receive holding register
+			volatile uint8_t readByte = REG_UART1_RHR;
+			//transmit that byte back
+			//transmitByte(readByte);
+			if (readByte == buttonUP){
+				//set_LED(1,0,0x00FFFFFF); //for debug
+				upDown = buttonUP;
+			}
+			else if (readByte == buttonDOWN){
+				//set_LED(2,0,0x00FFFFFF); //for debug
+			
+				upDown = buttonDOWN;
+			}
+			else if (readByte == buttonLEFT){
+				//set_LED(3,0,0x00FFFFFF); //for debug
+				paddleDir = paddleLEFT;
+			}
+			else if (readByte == buttonRIGHT){
+				//set_LED(4,0,0x00FFFFFF); //for debug
+				paddleDir = paddleRIGHT;
+			}
+			else if (readByte == buttonA){
+				//set_LED(5,0,0x00FFFFFF); //for debug
+				//game = BAM;
+			
+				AorB = buttonA;
+			}
+			else if (readByte == buttonB){
+				//game = BB;
+				//set_LED(6,0,0x00FFFFFF); //for debug
+				AorB = buttonB;
+			}
+		}
+	}
+}
+
+void PIOA_Handler(void) {
+	// reading PIOA_ISR will clear interrupt flags
+	uint32_t status = REG_PIOA_ISR;
+	
+	//uint32_t status = REG_PIOA_FRLHSR;
+	
+	wireless_mode = (REG_PIOA_PDSR & PIO_PDSR_P29);
+	
+	if(wireless_mode == wireless_off){
+		//UP
+		if ((status & PIO_ISR_P17) >= 1){ //pin change interrupt on P23
 			upDown = buttonUP;
-		}
-		else if (readByte == buttonDOWN){
-			//set_LED(2,0,0x00FFFFFF); //for debug
 			
-			upDown = buttonDOWN;
-		}
-		else if (readByte == buttonLEFT){
-			//set_LED(3,0,0x00FFFFFF); //for debug
+		} //LEFT
+		else if((status & PIO_ISR_P18) >= 1){
 			paddleDir = paddleLEFT;
-		}
-		else if (readByte == buttonRIGHT){
-			//set_LED(4,0,0x00FFFFFF); //for debug
+		}//DOWN
+		else if((status & PIO_ISR_P19) >= 1){
+			upDown = buttonDOWN;
+		} //RIGHT
+		else if((status & PIO_ISR_P22) >= 1){
 			paddleDir = paddleRIGHT;
-		}
-		else if (readByte == buttonA){
-			//set_LED(5,0,0x00FFFFFF); //for debug
-			//game = BAM;
-			
+		} //A
+		else if((status & PIO_ISR_P27) >= 1){
 			AorB = buttonA;
-		}
-		else if (readByte == buttonB){
-			//game = BB;
-			//set_LED(6,0,0x00FFFFFF); //for debug
+		} //B
+		else if((status & PIO_ISR_P28) >= 1){
 			AorB = buttonB;
 		}
 	}
