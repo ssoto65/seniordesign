@@ -1,6 +1,8 @@
 #include "led_SAM.h"
 #include "sam.h"
 
+uint32_t *address_start =  (uint32_t *)0x60000000;
+
 int array_addressing[32][32] = {{961,963,965,967,969,971,973,975,977,979,981,983,985,987,989,991,993,995,997,999,1001,1003,1005,1007,1009,1011,1013,1015,1017,1019,1021,1023},
 {1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63},
 {65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,123,125,127},
@@ -170,16 +172,14 @@ int bb_option[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
 
 void set_LED(int row, int column, unsigned long data){
-	volatile unsigned long address = array_addressing[row][column];
+	uint32_t address = array_addressing[row][column];
 	
-	volatile uint32_t *address_start =  (uint32_t *)0x60000000;
-	
-	for(int ii=0; ii<50;ii++){
+	for(uint8_t ijk=0; ijk<50;ijk++){
 	asm("nop");}
 
 	address_start[address] = data;
 	
-	for(int ii=0; ii<50;ii++){
+	for(uint8_t ijk=0; ijk<50;ijk++){
 		asm("nop");}
 	
 }

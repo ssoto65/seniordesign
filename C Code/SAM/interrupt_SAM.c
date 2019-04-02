@@ -28,6 +28,8 @@ void interrupt_init(void){
 	REG_PIOA_FELLSR |= PIO_FELLSR_P17 + PIO_FELLSR_P18 + PIO_FELLSR_P19 + PIO_FELLSR_P22 + PIO_FELLSR_P27 + PIO_FELLSR_P28;
 	
 	
+	NVIC_SetPriority(PIOA_IRQn,13);
+	
 	
 	//enable PIOA interrupts
 	NVIC_EnableIRQ(PIOA_IRQn);

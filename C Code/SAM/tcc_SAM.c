@@ -14,12 +14,11 @@
 #define BB 1
 #define bb_refresh 25
 #define bam_refresh 25
-volatile uint32_t counter = 0;
 extern volatile uint8_t game;
 
 void timerInit(){
 	
-	NVIC_SetPriority(TC0_IRQn,7);
+	NVIC_SetPriority(TC0_IRQn,1);
 	//Setup for TC0 - ID 23, TIOA0 - PA0 peripheral B
 	//enable interrupts in NVIC for TC0
 	NVIC_EnableIRQ(TC0_IRQn);
@@ -32,7 +31,13 @@ void timerInit(){
 	//mainclock div 2
 	REG_TC0_CMR0 |= TC_CMR_TCCLKS_TIMER_CLOCK1;
 	//enable couter overflow interrupt
-	REG_TC0_IER0 |= TC_IER_COVFS;
+	//REG_TC1_IER0 |= TC_IER_COVFS;
+	
+	REG_TC0_IER0 |= TC_IER_CPCS; //enable RC compare interrupt
+	REG_TC0_CMR0 |= TC_CMR_CPCTRG; //compare resets counter and clock
+	
+	REG_TC0_RC0 = 567; //1563/2;
+	
 	//enable tc clock
 	REG_TC0_CCR0 |= TC_CCR_CLKEN;
 
@@ -40,25 +45,3 @@ void timerInit(){
 	//PIO setup (not neccessary) because we won't use the pins
 }
 
-
-
-void TC0_Handler(void){
-	//read status register - this clears interrupt flags
-	uint32_t status = REG_TC0_SR0;
-	if ((status & TC_SR_COVFS)>=1){
-		//increment counter
-		counter+=1;
-	}
-	
-	if (counter>bb_refresh){
-		//reset counter
-		counter=0;
-		if (game == BAM){
-			mazerefresh();	
-		}
-		else if (game == BB){
-			ballRefresh();
-			paddleRefresh();
-		}
-	}
-}

@@ -49,10 +49,10 @@ void i2c_start(uint8_t slave_address, uint8_t mread){ //read=1, write=0
     //set slave address
     REG_TWI0_MMR |= TWI_MMR_DADR(slave_address);
     //set read/write direction
-    if (mread == write){ //write
+    if (mread == write_i2c){ //write
         REG_TWI0_MMR &= ~TWI_MMR_MREAD;
     }
-    else if (mread == read){ //read
+    else if (mread == read_i2c){ //read
         REG_TWI0_MMR |= TWI_MMR_MREAD;
     }
     //send start
@@ -105,7 +105,7 @@ int who_am_I(void){
 		//THIS CODE WORKS
 		REG_TWI0_MMR |= TWI_MMR_IADRSZ_1_BYTE;
 		REG_TWI0_IADR = 117;
-		i2c_start(0x69,read);
+		i2c_start(0x69,read_i2c);
 		int test = i2c_readNACK();
 		
 		return test;
@@ -134,28 +134,28 @@ int read_register(uint8_t register){
 void accel_data(void){
 	while(!dataready){
 		REG_TWI0_IADR = 58; //Reading Status Register
-		i2c_start(0x69,read);
+		i2c_start(0x69,read_i2c);
 		dataready = i2c_readNACK();
 	}
 	
 	REG_TWI0_IADR = 59; //Reading XH
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_x = (i2c_readNACK() << 8);
 	REG_TWI0_IADR = 60; //Reading XL
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_x |= i2c_readNACK();
 	
 	REG_TWI0_IADR = 61; //Reading YH
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_y = (i2c_readNACK() << 8);
 	REG_TWI0_IADR = 62; //Reading YL
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_y |= i2c_readNACK();
 	
 	REG_TWI0_IADR = 63; //Reading ZH
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_z = (i2c_readNACK() << 8);
 	REG_TWI0_IADR = 64; //Reading ZL
-	i2c_start(0x69,read);
+	i2c_start(0x69,read_i2c);
 	accel_z |= i2c_readNACK();
 }

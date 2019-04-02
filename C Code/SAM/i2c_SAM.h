@@ -3,8 +3,8 @@
 #ifndef I2C_DRIVER_H_
 #define I2C_DRIVER_H_
 
-#define read	1
-#define write	0
+#define read_i2c	1
+#define write_i2c	0
 
 void i2c_init(void);
 void i2c_stop(void);

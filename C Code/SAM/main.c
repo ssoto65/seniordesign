@@ -13,9 +13,20 @@
 #include "uart_SAM.h"
 
 
+#include "ff.h"
+#include "diskio.h"
+
+void initCLK(void);
+void SetVcoreUp (unsigned int level);
+FRESULT WriteFile(char*, char*, WORD);
+void fat_init(void);
+
+
+
 #define BAM 0
 #define BB 1
 extern volatile uint8_t game;
+volatile uint8_t play = 0;
 
 #define buttonUP 1
 #define buttonDOWN 2
@@ -31,6 +42,30 @@ extern volatile  uint8_t upDown;
 extern volatile uint8_t AorB;
 extern volatile uint8_t bam_WinOrLose;
 extern volatile uint8_t bb_WinOrLose;
+
+
+#define bb_refresh 2000
+#define bam_refresh 25
+
+FIL file;                                               /* Opened file object */
+FATFS fatfs;                                            /* File system object */
+DIRS dir;                                               /* Directory object   */
+FRESULT errCode;                                        /* Error code object  */
+FRESULT res;                                            /* Result object      */
+UINT bytesRead;                                         /* Bytes read object  */
+UINT read;                                              /* Read bytes object  */
+
+unsigned char MST_Data,SLV_Data;
+BYTE buffer[32];
+int result=1;
+uint8_t songByte;
+
+unsigned int bytesWritten;
+UINT TEST[1] = {0};
+volatile UINT cnt;
+volatile UINT readTest[15];
+volatile uint32_t songLength = 0;
+volatile uint32_t counter = 0;
 
 
 volatile int sine[256] = {0x800,0x832,0x864,0x896,0x8c8,0x8fa,0x92c,0x95e,
@@ -69,7 +104,7 @@ volatile int sine[256] = {0x800,0x832,0x864,0x896,0x8c8,0x8fa,0x92c,0x95e,
 
 int main(void)
 {
-
+	NVIC_SetPriorityGrouping(0U);
 	SystemInit();
 	REG_WDT_MR |= WDT_MR_WDDIS;
 	clock_init();
@@ -80,9 +115,11 @@ int main(void)
 	UART_Init(); //Pin 7/PB2(RX) | Pin 9/PB3(TX)
 	ebi_init();
 	timerInit();
+	fat_init();
 	//NVIC_DisableIRQ(PIOA_IRQn);
 	//SD Card // Pin 28/PA16(SS) | Pin 31/PA14(SPCK) | Pin 33/PA13(MOSI) | Pin 41/PA12(MISO) 
-	__enable_irq();                       
+	__enable_irq();        
+	REG_TC0_CCR0 |= TC_CCR_SWTRG;               
 	//__DMB();    
 	//interrupt_init();
 	
@@ -91,31 +128,11 @@ int main(void)
 	//bam_play();
 	
 	while(1){
-		//while(AorB != buttonA){
-		//while(1){
-			//if (game == BB){
-				//display_menu_bb();
-				//game = BB;
-				//while(upDown != buttonDOWN);
-			//}else{
-				
-				//display_menu_bam();
-				//game = BAM;
-				//while(upDown != buttonUP);
-				
-			//}
-			
-			//if(upDown == buttonUP){
-				//game = BB;
-			//}
-			//else if(upDown == buttonDOWN){
-				//game = BAM;
-			//}
-		//}	
-		
 		while(AorB != buttonA){
 			if (game == BB){
+				__disable_irq();
 				display_menu_bb();
+				__enable_irq();
 				game = BAM;
 				while(!(upDown == buttonDOWN)){
 					if (AorB == buttonA) {
@@ -123,7 +140,9 @@ int main(void)
 						 break;}
 				}
 				}else{
+				__disable_irq();
 				display_menu_bam();
+				__enable_irq();
 				game = BB;
 				while(!(upDown == buttonUP)){
 					if (AorB == buttonA) {
@@ -133,17 +152,21 @@ int main(void)
 				}
 			}
 		}
+		
+		play = 1;
 			
 		if (game == BAM){
 			bam_play();
 			while(bam_WinOrLose == 37);
-			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bam_WinOrLose == 0){
 				display_lose();
+				play = 0;
 				while(AorB != buttonB);
 			}
 			else{
 				display_win();
+				play = 0;
 				while(AorB != buttonB);
 			}
 		}
@@ -151,13 +174,15 @@ int main(void)
 		else if (game == BB){
 			bb_play();
 			while (bb_WinOrLose == 37);
-			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bb_WinOrLose == 0){
 				display_lose();
+				play = 0;
 				while(AorB != buttonB);
 			}
 			else{
 				display_win();
+				play = 0;
 				while(AorB != buttonB);
 			}
 		}
@@ -215,4 +240,54 @@ void HardFault_Handler(void)
 	" bx r2                                                     \n"
 	" handler2_address_const: .word prvGetRegistersFromStack    \n"
 	);
+}
+
+void fat_init(void){
+	errCode = -1;
+
+	while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
+		errCode = f_mount(0, &fatfs);                       //mount drive number 0
+		errCode = f_opendir(&dir, "/");				    	//root directory
+
+		errCode = f_open(&file, "/menu.wav", FA_READ);
+		if(errCode != FR_OK)
+		result=0;                                       //used as a debugging flag
+		if(errCode == FR_INT_ERR)
+		f_close(&file);
+	}
+}
+
+void TC0_Handler(void){
+	__disable_irq();        
+	//read status register - this clears interrupt flags
+	
+	uint32_t status = REG_TC0_SR0;
+	if ((status & TC_SR_CPCS)>=1){
+		//cleared flag
+		//increment counter
+		counter+=1;
+	}
+	
+	//READ
+	errCode = f_read(&file, &TEST, 1, &cnt);
+	DAC_write(*TEST << 2,0);
+	songLength++;
+	if (songLength+1 >=  0x00399DFF){
+		f_lseek(&file, (f_tell(&file) - songLength));
+		songLength = 0;
+	}
+
+	if (counter>bb_refresh){
+		//reset counter
+		counter=0;
+		if ((game == BAM) && play){
+			mazerefresh();
+		}
+		else if ((game == BB) && play){
+			ballRefresh();
+			paddleRefresh();
+		}
+	}
+	__enable_irq();        
+	
 }

@@ -56,7 +56,7 @@ void UART_Init(){
 	//enable interrupt on receive
 	REG_UART1_IER |= UART_IER_RXRDY;
 	
-	NVIC_SetPriority (UART1_IRQn,1);
+	NVIC_SetPriority (UART1_IRQn,7);
 	
 	NVIC_EnableIRQ(UART1_IRQn);
 	
@@ -79,6 +79,7 @@ void printString(const char myString[]) {
 }
 
 void UART1_Handler(void) {
+	__disable_irq();        
 	// when we receive a byte, transmit that byte back
 	uint32_t status = REG_UART1_SR;
 	
@@ -121,9 +122,11 @@ void UART1_Handler(void) {
 			}
 		}
 	}
+	__enable_irq();        
 }
 
 void PIOA_Handler(void) {
+	__disable_irq();        
 	// reading PIOA_ISR will clear interrupt flags
 	uint32_t status = REG_PIOA_ISR;
 	
@@ -153,6 +156,7 @@ void PIOA_Handler(void) {
 			AorB = buttonB;
 		}
 	}
+	__enable_irq();        
 }
 
 //Example code
