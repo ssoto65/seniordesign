@@ -16,13 +16,14 @@
 #define buttonRIGHT 4
 #define buttonA 5
 #define buttonB 6
+#define buttonDirstop 7
 
 volatile uint8_t buttonPressed = 0;
 
 void buttonINT(void){
 	// PORTA
-	PORTA.PIN7CTRL = PORT_ISC_RISING_gc;
-	PORTA.PIN6CTRL = PORT_ISC_RISING_gc;
+	PORTA.PIN7CTRL = PORT_ISC_BOTHEDGES_gc;
+	PORTA.PIN6CTRL = PORT_ISC_BOTHEDGES_gc;
 	PORTA.PIN5CTRL = PORT_ISC_RISING_gc;
 	PORTA.PIN4CTRL = PORT_ISC_RISING_gc;
 	
@@ -37,13 +38,23 @@ void buttonINT(void){
 	sei();
 }
 ISR(PORTA_PORT_vect){
-	PORTA_INTFLAGS = 0xFF; //clear all
-	if(PORTA_IN & PIN7_bm){
+	uint8_t flag = PORTA_INTFLAGS;
+	
+	if((PORTA_IN & PIN7_bm) && (flag & PIN7_bm)){
 		buttonPressed = buttonLEFT;
 		uartTX(buttonPressed);
 	}
-	else if(PORTA_IN & PIN6_bm){
+	else if(!(PORTA_IN & PIN7_bm) && (flag & PIN7_bm)){
+		buttonPressed = buttonDirstop;
+		uartTX(buttonPressed);
+	}
+	else if((PORTA_IN & PIN6_bm) && (flag & PIN6_bm)){
 		buttonPressed = buttonRIGHT;
+		uartTX(buttonPressed);
+	}
+	
+	else if(!(PORTA_IN & PIN6_bm) && (flag & PIN6_bm)){
+		buttonPressed = buttonDirstop;
 		uartTX(buttonPressed);
 	}
 	else if(PORTA_IN & PIN5_bm){
@@ -62,4 +73,6 @@ ISR(PORTA_PORT_vect){
 		buttonPressed = buttonB;
 		uartTX(buttonPressed);
 	}
+	
+	PORTA_INTFLAGS = 0xFF; //clear all
 }
