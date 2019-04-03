@@ -15,12 +15,16 @@
 #define Up 0
 #define Down 1
 
+
+extern volatile uint32_t wireless_mode;
+
 //#define BB 1
 //extern volatile uint8_t game;
 
 #define lose 0
 #define win 1
 volatile uint8_t bb_WinOrLose;
+volatile uint8_t bb_level = 0;
 
 #define paddleLEFT 1
 #define paddleRIGHT 2
@@ -32,6 +36,11 @@ volatile int LeftOrRight = 0; //left = 0, right =1
 volatile int UpOrDown = 0; //up= 0, down=1
 uint8_t xPos = 30;
 uint8_t yPos = 15;
+
+volatile uint8_t current;
+
+
+
 
 int bb_level_one_OG[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
@@ -64,7 +73,43 @@ int bb_level_one_OG[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}}; 
+	
+	
+int bb_level_UF_OG[32][32] ={{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,4,4,4,0,4,4,4,0,4,4,4,0,4,4,4,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,4,4,4,0,4,4,4,0,4,4,4,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,4,4,4,0,4,4,4,0,4,4,4,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,4,4,4,0,4,4,4,0,4,4,4,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,4,4,4,0,0,0,4,4,4,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,2,2,2,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
+{1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}};
+	
+
 	
 int bb_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1},
@@ -115,8 +160,19 @@ void bb_play(void){
 }
 
 void paddleRefresh(void){
+	if (wireless_mode == 0){
+		if (((REG_PIOA_PDSR & PIO_PDSR_P18)>>18) == 0) {
+			paddleDir = paddleLEFT;
+		}else if (((REG_PIOA_PDSR & PIO_PDSR_P22)>>22) == 0) {
+			paddleDir = paddleRIGHT;
+		}else{
+			paddleDir = 0;
+		}
+			
+	}
+	
+	
 	if(paddleDir == paddleRIGHT){
-		paddleDir = 0;
 		if (paddleIdx+4 != 28){
 			set_LED(31,paddleIdx,0x00);
 			set_LED(31,paddleIdx+1,0x00);
@@ -133,7 +189,6 @@ void paddleRefresh(void){
 		}
 	}
 	else if(paddleDir == paddleLEFT){
-		paddleDir = 0;
 		if (paddleIdx != 3){
 			set_LED(31,paddleIdx,0x00);
 			set_LED(31,paddleIdx+1,0x00);
@@ -153,7 +208,9 @@ void paddleRefresh(void){
 }
 
 void ballRefresh(void){
-	set_LED(xPos,yPos,0x00); //Remove current ball position
+	
+	
+	if (current != 4) set_LED(xPos,yPos,0x00); //Remove current ball position
 	
 	//Check Column boundaries
 	if (yPos == 28){
@@ -165,8 +222,15 @@ void ballRefresh(void){
 	
 	//Check Row boundaries
 	if (xPos == 30){
-		if ((yPos+1 >= paddleIdx) && (yPos+1 <= paddleIdx+5)){
+		if ((yPos+1 >= paddleIdx) && (yPos+1 <= paddleIdx+2)){
 			UpOrDown = Up;
+			LeftOrRight = Left;
+		}else if (yPos+1 == paddleIdx+3){
+			UpOrDown = Up;
+		}
+		else if ((yPos+1 >= paddleIdx+4) && (yPos+1 <= paddleIdx+5)){
+			UpOrDown = Up;
+			LeftOrRight = Right;
 		}
 		else{
 			//endGame();
@@ -185,6 +249,7 @@ void ballRefresh(void){
 			
 			UpOrDown = Up;
 			
+			bb_level = 0;
 			bb_WinOrLose = lose;
 		}
 	}
@@ -208,8 +273,8 @@ void ballRefresh(void){
 		xPos++;
 	}
 	
-	volatile uint8_t current = bb_level_one[xPos][yPos];
-	//Brick hit
+	current = bb_level_one[xPos][yPos];
+	//RED Brick hit
 	if (current == 2){
 		UpOrDown ^= 1; //Switch vertical direction
 		if(bb_level_one[xPos][yPos+1] == 0){
@@ -247,22 +312,67 @@ void ballRefresh(void){
 		}
 	}
 	
+	//YELLOW Brick hit
+	if (current == 4){
+		UpOrDown ^= 1; //Switch vertical direction
+		if(bb_level_one[xPos][yPos+1] == 0){
+			//turn led red
+			set_LED(xPos,yPos,0x0000FF);
+			set_LED(xPos,yPos-1,0x0000FF);
+			set_LED(xPos,yPos-2,0x0000FF);
+			
+			//update bit map
+			bb_level_one[xPos][yPos] = 2;
+			bb_level_one[xPos][yPos-1] = 2;
+			bb_level_one[xPos][yPos-2] = 2;
+		}
+		else if(bb_level_one[xPos][yPos-1] == 0){
+			//turn led red
+			set_LED(xPos,yPos,0x0000FF);
+			set_LED(xPos,yPos+1,0x0000FF);
+			set_LED(xPos,yPos+2,0x0000FF);
+			
+			//update bit map
+			bb_level_one[xPos][yPos] = 2;
+			bb_level_one[xPos][yPos+1] = 2;
+			bb_level_one[xPos][yPos+2] = 2;
+		}
+		else{
+			//turn led red
+			set_LED(xPos,yPos-1,0x0000FF);
+			set_LED(xPos,yPos,0x0000FF);
+			set_LED(xPos,yPos+1,0x0000FF);
+			
+			//update bit map
+			bb_level_one[xPos][yPos-1] = 2;
+			bb_level_one[xPos][yPos] = 2;
+			bb_level_one[xPos][yPos+1] = 2;
+		}
+	}
+	
 	volatile int red_found = 0;
 	
 	for(int ii = 0; ii <32; ii++){
 		for(int jj = 0; jj <32; jj++){
-			if(bb_level_one[ii][jj] == 2){
+			if(bb_level_one[ii][jj] == 2 || bb_level_one[ii][jj] == 4){
 				red_found = 1;
 			}
 		}
 	}
 	
 	if(red_found == 0 ){
-		bb_WinOrLose = win;
+		bb_level++;
+		if (bb_level == 3){
+			bb_WinOrLose = win;
+		}
+		else{
+			bb_play();
+		}
+		
 	}
 	
 	//Update ball location
-	set_LED(xPos,yPos,0x00FFFFFF);
+	if (current != 4) set_LED(xPos,yPos,0x00FFFFFF);
 }
 
 void bb_screen_load(void){
@@ -272,15 +382,22 @@ void bb_screen_load(void){
 		for(int ii = 0; ii < 32; ii++){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
-				bb_level_one[ii][jj] = bb_level_one_OG[ii][jj];
-				if(bb_level_one_OG[ii][jj]== 1){
+				if(bb_level == 0){
+					bb_level_one[ii][jj] = bb_level_one_OG[ii][jj];
+				}else if (bb_level == 1){
+					bb_level_one[ii][jj] = bb_level_UF_OG[ii][jj];
+				}
+				if(bb_level_one[ii][jj]== 1){
 					set_LED(ii,jj,0xFF0000);
 				}
-				else if(bb_level_one_OG[ii][jj]== 2){
+				else if(bb_level_one[ii][jj]== 2){
 					set_LED(ii,jj,0x0000FF);
 				}
-				else if(bb_level_one_OG[ii][jj]== 3){
+				else if(bb_level_one[ii][jj]== 3){
 					set_LED(ii,jj,0x00FF00);
+				}
+				else if(bb_level_one[ii][jj]== 4){
+					set_LED(ii,jj,0x00FFFF);
 				}
 				else{
 					set_LED(ii,jj,0);

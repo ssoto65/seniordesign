@@ -8,6 +8,7 @@
 #define buttonRIGHT 4
 #define buttonA 5
 #define buttonB 6
+#define buttonDirstop 7
 
 #define paddleLEFT 1
 #define paddleRIGHT 2
@@ -109,6 +110,10 @@ void UART1_Handler(void) {
 				//set_LED(4,0,0x00FFFFFF); //for debug
 				paddleDir = paddleRIGHT;
 			}
+			else if (readByte == buttonDirstop){
+				//set_LED(4,0,0x00FFFFFF); //for debug
+				paddleDir = 0;
+			}
 			else if (readByte == buttonA){
 				//set_LED(5,0,0x00FFFFFF); //for debug
 				//game = BAM;
@@ -138,14 +143,13 @@ void PIOA_Handler(void) {
 		//UP
 		if ((status & PIO_ISR_P17) >= 1){ //pin change interrupt on P23
 			upDown = buttonUP;
-			
 		} //LEFT
 		else if((status & PIO_ISR_P18) >= 1){
 			paddleDir = paddleLEFT;
 		}//DOWN
 		else if((status & PIO_ISR_P19) >= 1){
 			upDown = buttonDOWN;
-		} //RIGHT
+		} //RIGHT PRESSED
 		else if((status & PIO_ISR_P22) >= 1){
 			paddleDir = paddleRIGHT;
 		} //A
