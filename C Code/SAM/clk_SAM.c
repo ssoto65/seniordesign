@@ -33,7 +33,7 @@ void clock_init(void){
 	
 	//12MHz / 6 = 2MHz, 2MHz * (24+1) = 50MHz
 	REG_CKGR_PLLBR |= CKGR_PLLBR_MULB(24);
-	REG_CKGR_PLLBR |= CKGR_PLLBR_DIVB(6);
+	REG_CKGR_PLLBR |= CKGR_PLLBR_DIVB(12);
 
 	//select PLLB as the master clock
 	//master clock source selection - choose main clock

@@ -36,7 +36,8 @@ void timerInit(){
 	REG_TC0_IER0 |= TC_IER_CPCS; //enable RC compare interrupt
 	REG_TC0_CMR0 |= TC_CMR_CPCTRG; //compare resets counter and clock
 	
-	REG_TC0_RC0 = 567; //1563/2;
+	//50 MHz = 567
+	REG_TC0_RC0 = 284; //1563/2;
 	
 	//enable tc clock
 	REG_TC0_CCR0 |= TC_CCR_CLKEN;

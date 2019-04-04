@@ -90,7 +90,8 @@ void SDCard_init(void)
 	SPI_setMode(0);
 	//set clock generator (1 = peripheral clock rate), otherwise a divisor
 	//SCBR = fperipheral clock / SPCK Bit Rate
-	REG_SPI_CSR |= SPI_CSR_SCBR(25);
+	//50 MHZ = 25, 25 MHZ = 12
+	REG_SPI_CSR |= SPI_CSR_SCBR(12);
 	//REG_SPI_CSR |= SPI_CSR_DLYBCT(4);
 	//REG_SPI_CSR |= SPI_CSR_DLYBS(4);
 	//chip select remains low after transfer

@@ -184,6 +184,75 @@ void set_LED(int row, int column, unsigned long data){
 	
 }
 
+// void set_LED_bit_bang(int row, int column, unsigned long data){
+// 	volatile uint32_t address = array_addressing[row][column];
+// 
+// 	
+// 	
+// 	for (uint8_t ii = 0; ii <= 3; ii++){
+// 		
+// 		//WE and NWE Set Low
+// 		REG_PIOC_CODR = PIO_CODR_P10 + PIO_CODR_P8;
+// 		
+// 		//Address Lines Set Low
+// 		REG_PIOC_CODR = PIO_CODR_P18 + PIO_CODR_P19 + PIO_CODR_P20 + PIO_CODR_P21 + PIO_CODR_P22 + PIO_CODR_P23 + PIO_CODR_P24 + PIO_CODR_P25 + PIO_CODR_P26 + PIO_CODR_P27 + PIO_CODR_P28 + PIO_CODR_P29;
+// 		
+// 		//Data Lines Set Low
+// 		REG_PIOC_CODR = PIO_CODR_P0 + PIO_CODR_P1 + PIO_CODR_P2 + PIO_CODR_P3 + PIO_CODR_P4 + PIO_CODR_P5 + PIO_CODR_P6 + PIO_CODR_P7;
+// 		
+// 		
+// 		//Set Address Lines to Desired Byte of Data
+// 		REG_PIOC_SODR = ((address<< 18)+(ii<<16));
+// 		
+// 		//Set Data Lines to Desired Byte of Data
+// 		REG_PIOC_SODR = (uint8_t) (data >>(ii*8));
+// 		
+// 		//WE and NWE Set Low
+// 		REG_PIOC_SODR = PIO_SODR_P18 + PIO_SODR_P10 + PIO_SODR_P8;
+// 		
+// 		
+// 	}
+// 	
+// }
+
+// void ebi_init_bit_bang(void){
+// 	
+// 	//Turn on PIOC Clock
+// 	REG_PMC_PCER0 |= PMC_PCER0_PID13;
+// 	
+// 	//Address Lines PIOC Enable
+// 	REG_PIOC_PER |= PIO_PER_P18 + PIO_PER_P19 + PIO_PER_P20 + PIO_PER_P21 + PIO_PER_P22 + PIO_PER_P23 + PIO_PER_P24 + PIO_PER_P25 + PIO_PER_P26 + PIO_PER_P27 + PIO_PER_P28 + PIO_PER_P29;
+// 	
+// 	//Data Lines PIOC Enable
+// 	REG_PIOC_PER |= PIO_PER_P0 + PIO_PER_P1 + PIO_PER_P2 + PIO_PER_P3 + PIO_PER_P4 + PIO_PER_P5 + PIO_PER_P6 + PIO_PER_P7;
+// 	
+// 	//WE and NWE PIOC Enable
+// 	REG_PIOC_PER |= PIO_PER_P18 + PIO_PER_P10 + PIO_PER_P8;
+// 	
+// 	
+// 	
+// 	//Address Lines Set Low
+// 	REG_PIOC_CODR |= PIO_CODR_P18 + PIO_CODR_P19 + PIO_CODR_P20 + PIO_CODR_P21 + PIO_CODR_P22 + PIO_CODR_P23 + PIO_CODR_P24 + PIO_CODR_P25 + PIO_CODR_P26 + PIO_CODR_P27 + PIO_CODR_P28 + PIO_CODR_P29;
+// 	
+// 	//Data Lines Set Low
+// 	REG_PIOC_CODR |= PIO_CODR_P0 + PIO_CODR_P1 + PIO_CODR_P2 + PIO_CODR_P3 + PIO_CODR_P4 + PIO_CODR_P5 + PIO_CODR_P6 + PIO_CODR_P7;
+// 	
+// 	//WE and NWE Set Low
+// 	REG_PIOC_CODR |= PIO_CODR_P18 + PIO_CODR_P10 + PIO_CODR_P8;
+// 	
+// 	
+// 	
+// 	//Address Lines Set as outputs
+// 	REG_PIOC_OER |= PIO_OER_P18 + PIO_OER_P19 + PIO_OER_P20 + PIO_OER_P21 + PIO_OER_P22 + PIO_OER_P23 + PIO_OER_P24 + PIO_OER_P25 + PIO_OER_P26 + PIO_OER_P27 + PIO_OER_P28 + PIO_OER_P29;
+// 	
+// 	//Data Lines Set as Outputs
+// 	REG_PIOC_OER |= PIO_OER_P0 + PIO_OER_P1 + PIO_OER_P2 + PIO_OER_P3 + PIO_OER_P4 + PIO_OER_P5 + PIO_OER_P6 + PIO_OER_P7;
+// 	
+// 	//WE and NWE Set as Outputs
+// 	REG_PIOC_OER |= PIO_OER_P18 + PIO_OER_P10 + PIO_OER_P8;
+// 	
+// }
+
 void clear_matrix(void){
 	for (uint8_t i = 0; i<=31; i++){
 		for(uint8_t j = 0; j<=31; j++){

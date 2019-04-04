@@ -28,8 +28,10 @@ void i2c_init(void){
 			
     //clockwave form 100khz - 196, 400khz - 46, when fperipheral is 20MHz
 	//REG_TWI0_CWGR |= TWI_CWGR_CKDIV(0);
-    REG_TWI0_CWGR |= TWI_CWGR_CLDIV(121); //3
-    REG_TWI0_CWGR |= TWI_CWGR_CHDIV(121); //3 
+	//50 MHz = 121
+	//25 MHZ = 59
+    REG_TWI0_CWGR |= TWI_CWGR_CLDIV(59); //3
+    REG_TWI0_CWGR |= TWI_CWGR_CHDIV(59); //3 
     //formula tlow = ((CLDIV x 2^CKDIV)+4)xTper;
     //1/100,000 = ((CLDIV x 2^0)+4)x1/20,000,000;
 	

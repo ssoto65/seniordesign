@@ -127,6 +127,7 @@ int main(void)
 	//bb_play();
 	//bam_play();
 	
+	
 	while(1){
 		while(AorB != buttonA){
 			if (game == BB){
@@ -158,7 +159,7 @@ int main(void)
 		if (game == BAM){
 			bam_play();
 			while(bam_WinOrLose == 37);
-			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bam_WinOrLose == 0){
 				display_lose();
 				play = 0;
@@ -174,7 +175,7 @@ int main(void)
 		else if (game == BB){
 			bb_play();
 			while (bb_WinOrLose == 37);
-			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bb_WinOrLose == 0){
 				display_lose();
 				play = 0;

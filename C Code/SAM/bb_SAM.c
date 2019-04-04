@@ -362,12 +362,12 @@ void ballRefresh(void){
 	
 	if(red_found == 0 ){
 		bb_level++;
-		if (bb_level == 3){
+		//if (bb_level == 3){
 			bb_WinOrLose = win;
-		}
-		else{
-			bb_play();
-		}
+		//}
+		//else{
+			//bb_play();
+		//}
 		
 	}
 	
@@ -382,9 +382,9 @@ void bb_screen_load(void){
 		for(int ii = 0; ii < 32; ii++){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
-				if(bb_level == 0){
+				if(bb_level == 1){
 					bb_level_one[ii][jj] = bb_level_one_OG[ii][jj];
-				}else if (bb_level == 1){
+				}else if (bb_level == 0){
 					bb_level_one[ii][jj] = bb_level_UF_OG[ii][jj];
 				}
 				if(bb_level_one[ii][jj]== 1){
@@ -397,7 +397,7 @@ void bb_screen_load(void){
 					set_LED(ii,jj,0x00FF00);
 				}
 				else if(bb_level_one[ii][jj]== 4){
-					set_LED(ii,jj,0x00FFFF);
+					set_LED(ii,jj,0x026AFD);
 				}
 				else{
 					set_LED(ii,jj,0);

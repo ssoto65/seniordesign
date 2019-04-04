@@ -41,8 +41,8 @@ void UART_Init(){
 	REG_PMC_PCER0 |= PMC_PCER0_PID9;
 	
 	//configure buad rate
-	REG_UART1_BRGR |= 27;
-	//fcpu/16xBR 26=4,000,000/(16x9600) /// 2=4,000,000/(16x115,200) /// 27=50,000,000/(16x115,200)
+	REG_UART1_BRGR |= 14;
+	//fcpu/16xBR 26=4,000,000/(16x9600) /// 2=4,000,000/(16x115,200) /// 27=50,000,000/(16x115,200) //14 = 25,000,000/(16x115,200)
 	
 	//parity
 	REG_UART1_MR |= UART_MR_PAR_NO;
