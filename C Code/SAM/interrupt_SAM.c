@@ -19,11 +19,11 @@ void interrupt_init(void){
 	//Read ISR so that it clears any interrupt flags that might be there
 	uint32_t temp = REG_PIOA_ISR;
 	//enable input change interrupt on PA23
-	REG_PIOA_IER |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28;
+	REG_PIOA_IER |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28 + PIO_IER_P29;
 	
 	REG_PIOA_AIMER |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28;
 	
-	REG_PIOA_ESR |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28;
+	REG_PIOA_ESR |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28 +  PIO_IER_P29;
 	
 	REG_PIOA_FELLSR |= PIO_IER_P17 + PIO_IER_P19 + PIO_IER_P27 + PIO_IER_P28;
 	

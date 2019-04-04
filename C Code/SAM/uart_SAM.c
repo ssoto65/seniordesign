@@ -10,6 +10,14 @@
 #define buttonB 6
 #define buttonDirstop 7
 
+#define accel_right 8
+#define accel_left 9
+#define accel_up 10
+#define accel_down 11
+#define accel_stop 12
+
+volatile uint8_t accel_dir;
+
 #define paddleLEFT 1
 #define paddleRIGHT 2
 
@@ -55,11 +63,11 @@ void UART_Init(){
 	REG_UART1_CR |= UART_CR_RXEN;
 	
 	//enable interrupt on receive
-	REG_UART1_IER |= UART_IER_RXRDY;
+	//REG_UART1_IER |= UART_IER_RXRDY;
 	
 	NVIC_SetPriority (UART1_IRQn,7);
 	
-	NVIC_EnableIRQ(UART1_IRQn);
+	//NVIC_EnableIRQ(UART1_IRQn);
 	
 }
 
@@ -125,6 +133,31 @@ void UART1_Handler(void) {
 				//set_LED(6,0,0x00FFFFFF); //for debug
 				AorB = buttonB;
 			}
+			else if (readByte == accel_left){
+				//game = BB;
+				//set_LED(6,0,0x00FFFFFF); //for debug
+				accel_dir = accel_left;
+			}
+			else if (readByte == accel_right){
+			//game = BB;
+			//set_LED(6,0,0x00FFFFFF); //for debug
+			accel_dir = accel_right;
+			}
+			else if (readByte == accel_up){
+			//game = BB;
+			//set_LED(6,0,0x00FFFFFF); //for debug
+			accel_dir = accel_up;
+			}
+			else if (readByte == accel_down){
+				//game = BB;
+				//set_LED(6,0,0x00FFFFFF); //for debug
+				accel_dir = accel_down;
+			}
+			else if (readByte == accel_stop){
+				//game = BB;
+				//set_LED(6,0,0x00FFFFFF); //for debug
+				accel_dir = 0;
+			}
 		}
 	}
 	__enable_irq();        
@@ -158,6 +191,18 @@ void PIOA_Handler(void) {
 		} //B
 		else if((status & PIO_ISR_P28) >= 1){
 			AorB = buttonB;
+		} //wireless mode
+		else if((status & PIO_ISR_P29) >= 1){
+			//wireless_mode = (REG_PIOA_PDSR & PIO_PDSR_P29);
+			wireless_mode = ((REG_PIOA_PDSR >> 29) & 1);
+			if(wireless_mode == 1){
+				NVIC_EnableIRQ(UART1_IRQn);
+				REG_UART1_IER |= UART_IER_RXRDY;
+			}
+			else if (wireless_mode == 0){
+				NVIC_DisableIRQ(UART1_IRQn);
+				REG_UART1_IER = 0;
+			}
 		}
 	}
 	__enable_irq();        

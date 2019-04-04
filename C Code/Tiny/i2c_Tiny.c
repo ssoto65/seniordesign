@@ -30,6 +30,7 @@ void i2c_init(void){
 
 uint8_t i2c_read(uint8_t address){
 	//////////////////////////////////////////////////
+		uint8_t test;
 		//THIS CODE WORKS//
 	    TWI0_MADDR = (0x68 << 1) | write;
 		while(!(TWI0_MSTATUS & TWI_CLKHOLD_bm));
@@ -43,6 +44,7 @@ uint8_t i2c_read(uint8_t address){
 		while(!(TWI0_MSTATUS & TWI_RIF_bm));
 		TWI0_MCTRLB |= TWI_MCMD_STOP_gc;
 		test = TWI0_MDATA;
+		return test;
 		/////////////////////////////////////////////////
 }
 

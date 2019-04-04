@@ -19,6 +19,14 @@ extern volatile int16_t accel_x;
 extern volatile int16_t accel_y;
 extern volatile int16_t accel_z;
 
+#define accel_right 8
+#define accel_left 9
+#define accel_up 10
+#define accel_down 11
+
+extern volatile uint8_t accel_dir;
+extern volatile uint32_t wireless_mode;
+
 #define lose 0
 #define win 1
 volatile uint8_t bam_WinOrLose;
@@ -136,7 +144,7 @@ void bam_init_ball(void){
 void mazerefresh(void){
 	
 	accel_data();
-	if( (accel_x > -750) && (accel_x < 750) && (accel_y < -1600)){
+	if( (((accel_x > -750) && (accel_x < 750) && (accel_y < -1600)) && (wireless_mode == 0)) || ((accel_dir == accel_right) && ((wireless_mode >> 29) == 1)) ){
 		if((bam_level_one[xPos-1][yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(--xPos,yPos,0x00FFFFFF);
@@ -148,7 +156,7 @@ void mazerefresh(void){
 		}
 	}
 	//LEFT
-	else if( (accel_x > -850) && (accel_x < 850) && (accel_y > 500)){
+	else if( (((accel_x > -850) && (accel_x < 850) && (accel_y > 500)) && (wireless_mode == 0)) || ((accel_dir == accel_left) && ((wireless_mode >> 29) == 1))){
 		if((bam_level_one[1+xPos][yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(++xPos,yPos,0x00FFFFFF);
@@ -160,7 +168,7 @@ void mazerefresh(void){
 		}
 	}
 	//DOWN
-	else if( (accel_y > -850) && (accel_y < 850) && (accel_x < -700)){
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x < -700))  && (wireless_mode == 0)) || ((accel_dir == accel_down) && ((wireless_mode >> 29) == 1))){
 		if((bam_level_one[xPos][1+yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(xPos,++yPos,0x00FFFFFF);
@@ -173,7 +181,7 @@ void mazerefresh(void){
 		}
 	}
 	//UP
-	else if( (accel_y > -850) && (accel_y < 850) && (accel_x > 650)){
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x > 650))  && (wireless_mode == 0)) || ((accel_dir == accel_up) && ((wireless_mode >> 29) == 1))){
 		//Empty Space
 		if((bam_level_one[xPos][yPos-1] == 0) ){
 			set_LED(xPos,yPos,0x00);
