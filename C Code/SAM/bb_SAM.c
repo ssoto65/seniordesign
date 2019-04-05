@@ -223,14 +223,25 @@ void ballRefresh(void){
 	//Check Row boundaries
 	if (xPos == 30){
 		if ((yPos+1 >= paddleIdx) && (yPos+1 <= paddleIdx+2)){
-			UpOrDown = Up;
-			LeftOrRight = Left;
+			//trying to fix glitch where ball goes through wall
+			if(paddleIdx <= 3){
+				UpOrDown = Up;
+				LeftOrRight = Right;
+			}else{
+				UpOrDown = Up;
+				LeftOrRight = Left;
+			}
 		}else if (yPos+1 == paddleIdx+3){
 			UpOrDown = Up;
 		}
 		else if ((yPos+1 >= paddleIdx+4) && (yPos+1 <= paddleIdx+5)){
-			UpOrDown = Up;
-			LeftOrRight = Right;
+			if(paddleIdx >= 28){
+				UpOrDown = Up;
+				LeftOrRight = Left;
+				}else{
+				UpOrDown = Up;
+				LeftOrRight = Right;
+			}
 		}
 		else{
 			//endGame();
