@@ -31,6 +31,8 @@ extern volatile uint32_t wireless_mode;
 #define win 1
 volatile uint8_t bam_WinOrLose;
 
+volatile uint8_t bam_level = 0;
+
 int bam_level_two[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 {1,0,0,1,0,0,0,0,0,0,0,0,1,0,2,0,0,2,0,0,0,0,2,0,0,3,0,0,0,2,0,1},
 {1,0,0,1,0,0,0,0,0,0,0,0,1,2,2,2,2,2,2,0,0,0,2,0,3,3,3,0,2,2,2,1},
@@ -117,6 +119,12 @@ void bam_screen_load(void){
 		for(int ii = 0; ii < 32; ii++){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
+				if(bam_level == 0){
+					bam_level_one[ii][jj] = bam_level_one[ii][jj];
+				}else{
+					bam_level_one[ii][jj] = bam_level_two[ii][jj];
+				}
+				
 				if(bam_level_one[ii][jj]== 1){
 					set_LED(ii,jj,0xFF0000);
 				}
@@ -144,44 +152,65 @@ void bam_init_ball(void){
 void mazerefresh(void){
 	
 	accel_data();
-	if( (((accel_x > -750) && (accel_x < 750) && (accel_y < -1600)) && (wireless_mode == 0)) || ((accel_dir == accel_right) && ((wireless_mode >> 29) == 1)) ){
+	if( (((accel_x > -750) && (accel_x < 750) && (accel_y < -1600)) && (wireless_mode == 0)) || ((accel_dir == accel_right) && ((wireless_mode) == 1)) ){
 		if((bam_level_one[xPos-1][yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(--xPos,yPos,0x00FFFFFF);
 		}else if((bam_level_one[xPos-1][yPos] == 2)){
 			bam_WinOrLose = lose;
+			bam_level = 0;
 		}
 		else if ((bam_level_one[xPos-1][yPos] == 3)){
-			bam_WinOrLose = win;
+			bam_level++;
+			if(bam_level == 2){
+				bam_WinOrLose = win;
+			}
+			else{
+				bam_play();
+			}
 		}
 	}
 	//LEFT
-	else if( (((accel_x > -850) && (accel_x < 850) && (accel_y > 500)) && (wireless_mode == 0)) || ((accel_dir == accel_left) && ((wireless_mode >> 29) == 1))){
+	else if( (((accel_x > -850) && (accel_x < 850) && (accel_y > 500)) && (wireless_mode == 0)) || ((accel_dir == accel_left) && ((wireless_mode) == 1))){
 		if((bam_level_one[1+xPos][yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(++xPos,yPos,0x00FFFFFF);
 		}else if((bam_level_one[1+xPos][yPos] == 2)){
 			bam_WinOrLose = lose;
+			bam_level = 0;
 		}		
 		else if ((bam_level_one[1+xPos][yPos] == 3)){
-			bam_WinOrLose = win;
+			bam_level++;
+			if(bam_level == 2){
+				bam_WinOrLose = win;
+			}
+			else{
+				bam_play();
+			}
 		}
 	}
 	//DOWN
-	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x < -700))  && (wireless_mode == 0)) || ((accel_dir == accel_down) && ((wireless_mode >> 29) == 1))){
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x < -700))  && (wireless_mode == 0)) || ((accel_dir == accel_down) && ((wireless_mode) == 1))){
 		if((bam_level_one[xPos][1+yPos] == 0) ){
 			set_LED(xPos,yPos,0x00);
 			set_LED(xPos,++yPos,0x00FFFFFF);
 		}else if((bam_level_one[xPos][1+yPos] == 2)){
 			bam_WinOrLose = lose;
+			bam_level = 0;
 		}
 		//Green
 		else if((bam_level_one[xPos][1+yPos] == 3)){
-			bam_WinOrLose = win;
+			bam_level++;
+			if(bam_level == 2){
+				bam_WinOrLose = win;
+			}
+			else{
+				bam_play();
+			}
 		}
 	}
 	//UP
-	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x > 650))  && (wireless_mode == 0)) || ((accel_dir == accel_up) && ((wireless_mode >> 29) == 1))){
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x > 650))  && (wireless_mode == 0)) || ((accel_dir == accel_up) && ((wireless_mode) == 1))){
 		//Empty Space
 		if((bam_level_one[xPos][yPos-1] == 0) ){
 			set_LED(xPos,yPos,0x00);
@@ -189,10 +218,17 @@ void mazerefresh(void){
 		//Red
 		}else if((bam_level_one[xPos][yPos-1] == 2) ){
 			bam_WinOrLose = lose;
+			bam_level = 0;
 		}
 		//Green
 		else if((bam_level_one[xPos][yPos-1] == 3) ){
-			bam_WinOrLose = win;			
+			bam_level++;
+			if(bam_level == 2){
+				bam_WinOrLose = win;
+			}
+			else{
+				bam_play();
+			}		
 		}
 		}
 }

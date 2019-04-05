@@ -24,7 +24,7 @@ volatile uint8_t accel_dir;
 #define wireless_on 1
 #define wireless_off 0 
 
-volatile uint32_t wireless_mode = 0;
+extern volatile uint32_t wireless_mode;
 
 volatile uint8_t upDown = 0;
 volatile uint8_t AorB = 0;
@@ -65,7 +65,7 @@ void UART_Init(){
 	//enable interrupt on receive
 	//REG_UART1_IER |= UART_IER_RXRDY;
 	
-	NVIC_SetPriority (UART1_IRQn,7);
+	NVIC_SetPriority(UART1_IRQn,7);
 	
 	//NVIC_EnableIRQ(UART1_IRQn);
 	
@@ -193,16 +193,7 @@ void PIOA_Handler(void) {
 			AorB = buttonB;
 		} //wireless mode
 		else if((status & PIO_ISR_P29) >= 1){
-			//wireless_mode = (REG_PIOA_PDSR & PIO_PDSR_P29);
-			wireless_mode = ((REG_PIOA_PDSR >> 29) & 1);
-			if(wireless_mode == 1){
-				NVIC_EnableIRQ(UART1_IRQn);
-				REG_UART1_IER |= UART_IER_RXRDY;
-			}
-			else if (wireless_mode == 0){
-				NVIC_DisableIRQ(UART1_IRQn);
-				REG_UART1_IER = 0;
-			}
+			//for(int ii = 0; ii<50;ii++){asm("nop");}
 		}
 	}
 	__enable_irq();        

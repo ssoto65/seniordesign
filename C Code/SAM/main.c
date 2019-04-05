@@ -43,6 +43,8 @@ extern volatile uint8_t AorB;
 extern volatile uint8_t bam_WinOrLose;
 extern volatile uint8_t bb_WinOrLose;
 
+volatile uint32_t wireless_mode = 0;
+
 
 #define bb_refresh 2000
 #define bam_refresh 25
@@ -159,7 +161,7 @@ int main(void)
 		if (game == BAM){
 			bam_play();
 			while(bam_WinOrLose == 37);
-			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bam_WinOrLose == 0){
 				display_lose();
 				play = 0;
@@ -175,7 +177,7 @@ int main(void)
 		else if (game == BB){
 			bb_play();
 			while (bb_WinOrLose == 37);
-			REG_TC0_CCR0 |= TC_CCR_CLKDIS;
+			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bb_WinOrLose == 0){
 				display_lose();
 				play = 0;
@@ -259,6 +261,20 @@ void fat_init(void){
 }
 
 void TC0_Handler(void){
+	
+	wireless_mode = (REG_PIOA_PDSR & PIO_PDSR_P29);
+	wireless_mode = ((REG_PIOA_PDSR >> 29) & 1);
+	if(wireless_mode == 1){
+		//uint32_t status = REG_UART1_SR;
+		//while(!(status & UART_SR_ENDRX));
+		NVIC_EnableIRQ(UART1_IRQn);
+		REG_UART1_IER |= UART_IER_RXRDY;
+	}
+	else if (wireless_mode == 0){
+		NVIC_DisableIRQ(UART1_IRQn);
+		REG_UART1_IER = 0;
+	}
+	
 	__disable_irq();        
 	//read status register - this clears interrupt flags
 	
