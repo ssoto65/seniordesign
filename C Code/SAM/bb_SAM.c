@@ -148,6 +148,7 @@ void bb_play(void){
 	
 	//game = BB;
 	bb_WinOrLose = 37;
+	//rtcSetTime(0,0,0);
 	
 	bb_screen_load();
 	bb_init_ball();

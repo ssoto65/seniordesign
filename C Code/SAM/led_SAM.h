@@ -15,3 +15,5 @@ void display_menu_bb(void);
 void display_menu_bam(void);
 void display_lose(void);
 void display_win(void);
+void write_number(int row, int col, int number);
+void update_time(void);
