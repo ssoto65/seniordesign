@@ -10,10 +10,12 @@
 #define buttonB 6
 #define buttonDirstop 7
 
-#define accel_right 8
-#define accel_left 9
-#define accel_up 10
-#define accel_down 11
+//Changed to fit orientation of main board
+//Changed to fit orientation of main board
+#define accel_up 8
+#define accel_down 9
+#define accel_right 10
+#define accel_left 11
 #define accel_stop 12
 
 volatile uint8_t accel_dir;

@@ -26,6 +26,10 @@ extern volatile uint32_t wireless_mode;
 volatile uint8_t bb_WinOrLose;
 volatile uint8_t bb_level = 0;
 
+
+extern uint8_t musicFlags[10];
+#define bam_ball_move 0
+
 #define paddleLEFT 1
 #define paddleRIGHT 2
 
@@ -145,7 +149,7 @@ int bb_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 {1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}};
 
 void bb_play(void){
-	
+	REG_TC0_CCR0 &= ~TC_CCR_CLKDIS;
 	//game = BB;
 	bb_WinOrLose = 37;
 	//rtcSetTime(0,0,0);
@@ -155,7 +159,6 @@ void bb_play(void){
 	bb_init_paddle();
 	
 	//start our TC0
-	REG_TC0_CCR0 &= ~TC_CCR_CLKDIS;
 	REG_TC0_CCR0 |= TC_CCR_CLKEN;
 	REG_TC0_CCR0 |= TC_CCR_SWTRG;
 }
@@ -322,6 +325,7 @@ void ballRefresh(void){
 			bb_level_one[xPos][yPos] = 0;
 			bb_level_one[xPos][yPos+1] = 0;
 		}
+	musicFlags[0] = 1;
 	}
 	
 	//YELLOW Brick hit
@@ -360,6 +364,7 @@ void ballRefresh(void){
 			bb_level_one[xPos][yPos] = 2;
 			bb_level_one[xPos][yPos+1] = 2;
 		}
+	musicFlags[0] = 1;
 	}
 	
 	volatile int red_found = 0;

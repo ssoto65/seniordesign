@@ -37,6 +37,8 @@ void timerInit(){
 	REG_TC0_CMR0 |= TC_CMR_CPCTRG; //compare resets counter and clock
 	
 	//50 MHz = 567
+	//44100 Samp Freq = 284
+	//48000 Samp Freq = 260
 	REG_TC0_RC0 = 284; //1563/2;
 	
 	//enable tc clock

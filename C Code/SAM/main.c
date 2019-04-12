@@ -63,12 +63,18 @@ BYTE buffer[32];
 int result=1;
 uint8_t songByte;
 
+uint8_t musicFlags[10];
+#define bam_ball_move 0
+
 unsigned int bytesWritten;
 UINT TEST[1] = {0};
 volatile UINT cnt;
 volatile UINT readTest[15];
 volatile uint32_t songLength = 0;
 volatile uint32_t counter = 0;
+
+uint16_t effects[1347];
+uint16_t music_output;
 
 // 
 // volatile int sine[256] = {0x800,0x832,0x864,0x896,0x8c8,0x8fa,0x92c,0x95e,
@@ -118,7 +124,18 @@ int main(void)
 	UART_Init(); //Pin 7/PB2(RX) | Pin 9/PB3(TX)
 	ebi_init();
 	timerInit();
-	fat_init();
+	
+	//effects
+	fat_init_effects();
+	for (volatile int ii = 0; ii < 0x543; ii++){
+		errCode = f_read(&file, &TEST, 1, &cnt);
+		effects[ii] = (*TEST << 2);
+	}
+	errCode = f_close(&file);
+	errCode = f_mount(0,0);
+	
+	//menu
+	fat_init_music();
 	slowClock_init();
 	//NVIC_DisableIRQ(PIOA_IRQn);
 	//SD Card // Pin 28/PA16(SS) | Pin 31/PA14(SPCK) | Pin 33/PA13(MOSI) | Pin 41/PA12(MISO) 
@@ -139,6 +156,10 @@ int main(void)
 			if (game == BB){
 				display_menu_bb();
 				game = BAM;
+				for (volatile int ind = 0; ind < 0x543; ind++){
+					DAC_write(effects[ind], 0);
+					//music_output = (music_output + effects[ii]) >> 1;
+				}
 				while(!(upDown == buttonDOWN)){
 					if (AorB == buttonA) {
 						game = BB;
@@ -147,6 +168,10 @@ int main(void)
 				}else{
 				display_menu_bam();
 				game = BB;
+				for (volatile int ind = 0; ind < 0x543; ind++){
+					DAC_write(effects[ind], 0);
+					//music_output = (music_output + effects[ii]) >> 1;
+				}
 				while(!(upDown == buttonUP)){
 					if (AorB == buttonA) {
 						game = BAM;
@@ -156,11 +181,12 @@ int main(void)
 			}
 		}
 		
-		play = 1;
+	//	play = 1;
 		rtcSetTime(0,0,0);
 			
 		if (game == BAM){
 			bam_play();
+			play = 1;
 			while(bam_WinOrLose == 37);
 			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bam_WinOrLose == 0){
@@ -177,6 +203,7 @@ int main(void)
 		
 		else if (game == BB){
 			bb_play();
+			play = 1;
 			while (bb_WinOrLose == 37);
 			//REG_TC0_CCR0 |= TC_CCR_CLKDIS;
 			if (bb_WinOrLose == 0){
@@ -246,7 +273,22 @@ void HardFault_Handler(void)
 	);
 }
 
-void fat_init(void){
+void fat_init_effects(void){
+	errCode = -1;
+
+	while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
+		errCode = f_mount(0, &fatfs);                       //mount drive number 0
+		errCode = f_opendir(&dir, "/");				    	//root directory
+
+		errCode = f_open(&file, "/effects.wav", FA_READ);
+		if(errCode != FR_OK)
+		result=0;                                       //used as a debugging flag
+		if(errCode == FR_INT_ERR)
+		f_close(&file);
+	}
+}
+
+void fat_init_music(void){
 	errCode = -1;
 
 	while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
@@ -287,25 +329,42 @@ void TC0_Handler(void){
 	}
 	
 	//READ
+	/*
 	errCode = f_read(&file, &TEST, 1, &cnt);
-	DAC_write(*TEST << 2,0);
+	//music_output = *TEST << 2;
+	DAC_write(*TEST << 2, 0);
 	songLength++;
 	if (songLength+1 >=  0x00399DFF){
 		f_lseek(&file, (f_tell(&file) - songLength));
 		songLength = 0;
 	}
-
+	*/
 	if (counter>bb_refresh){
 		//reset counter
 		counter=0;
 		if ((game == BAM) && play){
 			mazerefresh();
+			if(musicFlags[bam_ball_move] == 1){
+				for (volatile int ind = 0; ind < 0x543; ind++){
+					DAC_write(effects[ind], 0);
+					//music_output = (music_output + effects[ii]) >> 1;
+				}
+				musicFlags[bam_ball_move] = 0;
+			}
 		}
 		else if ((game == BB) && play){
 			ballRefresh();
 			paddleRefresh();
+			if(musicFlags[bam_ball_move] == 1){
+				for (volatile int ind = 0; ind < 0x543; ind++){
+					DAC_write(effects[ind], 0);
+					//music_output = (music_output + effects[ii]) >> 1;
+				}
+				musicFlags[bam_ball_move] = 0;
+			}
 		}
 	}
+	//DAC_write(music_output, 0);
 	__enable_irq();        
 	
 }

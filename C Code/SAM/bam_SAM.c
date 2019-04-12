@@ -19,13 +19,17 @@ extern volatile int16_t accel_x;
 extern volatile int16_t accel_y;
 extern volatile int16_t accel_z;
 
-#define accel_right 8
-#define accel_left 9
-#define accel_up 10
-#define accel_down 11
+//Changed to fit orientation of main board
+#define accel_up 8
+#define accel_down 9
+#define accel_right 10
+#define accel_left 11
 
 extern volatile uint8_t accel_dir;
 extern volatile uint32_t wireless_mode;
+
+extern uint8_t musicFlags[10];
+#define bam_ball_move 0
 
 #define lose 0
 #define win 1
@@ -66,7 +70,7 @@ int bam_level_two[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {1,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,1,0,2,0,0,0,2,0,0,0,0,0,1},
 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
 	
-int bam_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+int bam_level_one_OG[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 {1,0,0,1,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1},
 {1,0,0,1,2,2,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,1},
 {1,0,0,1,0,2,0,0,0,0,0,0,0,2,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,2,0,1},
@@ -98,6 +102,8 @@ int bam_level_one[32][32] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {1,2,2,2,0,0,0,0,0,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,1},
 {1,0,2,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1},
 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+	
+int bam_level_one[32][32];
 
 void bam_play(void){
 	//game = BAM;
@@ -120,7 +126,7 @@ void bam_screen_load(void){
 			//ii = 0;
 			for(int jj = 0; jj < 32; jj++){
 				if(bam_level == 0){
-					bam_level_one[ii][jj] = bam_level_one[ii][jj];
+					bam_level_one[ii][jj] = bam_level_one_OG[ii][jj];
 				}else{
 					bam_level_one[ii][jj] = bam_level_two[ii][jj];
 				}
@@ -152,15 +158,20 @@ void bam_init_ball(void){
 void mazerefresh(void){
 	
 	accel_data();
+	//RIGHT
 	if( (((accel_x > -750) && (accel_x < 750) && (accel_y < -1600)) && (wireless_mode == 0)) || ((accel_dir == accel_right) && ((wireless_mode) == 1)) ){
-		if((bam_level_one[xPos-1][yPos] == 0) ){
+		if((bam_level_one[xPos][yPos-1] == 0) ){
+			musicFlags[bam_ball_move] = 1;
 			set_LED(xPos,yPos,0x00);
-			set_LED(--xPos,yPos,0x00FFFFFF);
-		}else if((bam_level_one[xPos-1][yPos] == 2)){
+			set_LED(xPos,--yPos,0x00FFFFFF);
+		}
+			//Red
+		else if((bam_level_one[xPos][yPos-1] == 2) ){
 			bam_WinOrLose = lose;
 			bam_level = 0;
 		}
-		else if ((bam_level_one[xPos-1][yPos] == 3)){
+		//Green
+		else if((bam_level_one[xPos][yPos-1] == 3) ){
 			bam_level++;
 			if(bam_level == 2){
 				bam_WinOrLose = win;
@@ -172,31 +183,14 @@ void mazerefresh(void){
 	}
 	//LEFT
 	else if( (((accel_x > -850) && (accel_x < 850) && (accel_y > 500)) && (wireless_mode == 0)) || ((accel_dir == accel_left) && ((wireless_mode) == 1))){
-		if((bam_level_one[1+xPos][yPos] == 0) ){
-			set_LED(xPos,yPos,0x00);
-			set_LED(++xPos,yPos,0x00FFFFFF);
-		}else if((bam_level_one[1+xPos][yPos] == 2)){
-			bam_WinOrLose = lose;
-			bam_level = 0;
-		}		
-		else if ((bam_level_one[1+xPos][yPos] == 3)){
-			bam_level++;
-			if(bam_level == 2){
-				bam_WinOrLose = win;
-			}
-			else{
-				bam_play();
-			}
-		}
-	}
-	//DOWN
-	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x < -700))  && (wireless_mode == 0)) || ((accel_dir == accel_down) && ((wireless_mode) == 1))){
 		if((bam_level_one[xPos][1+yPos] == 0) ){
+			musicFlags[bam_ball_move] = 1;
 			set_LED(xPos,yPos,0x00);
 			set_LED(xPos,++yPos,0x00FFFFFF);
-		}else if((bam_level_one[xPos][1+yPos] == 2)){
-			bam_WinOrLose = lose;
-			bam_level = 0;
+		}
+		else if((bam_level_one[xPos][1+yPos] == 2)){
+		bam_WinOrLose = lose;
+		bam_level = 0;
 		}
 		//Green
 		else if((bam_level_one[xPos][1+yPos] == 3)){
@@ -209,26 +203,47 @@ void mazerefresh(void){
 			}
 		}
 	}
-	//UP
-	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x > 650))  && (wireless_mode == 0)) || ((accel_dir == accel_up) && ((wireless_mode) == 1))){
-		//Empty Space
-		if((bam_level_one[xPos][yPos-1] == 0) ){
+	//DOWN
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x < -700))  && (wireless_mode == 0)) || ((accel_dir == accel_down) && ((wireless_mode) == 1))){
+		if((bam_level_one[1+xPos][yPos] == 0) ){
+			musicFlags[bam_ball_move] = 1;
 			set_LED(xPos,yPos,0x00);
-			set_LED(xPos,--yPos,0x00FFFFFF);
-		//Red
-		}else if((bam_level_one[xPos][yPos-1] == 2) ){
+			set_LED(++xPos,yPos,0x00FFFFFF);
+		}
+		else if((bam_level_one[1+xPos][yPos] == 2)){
 			bam_WinOrLose = lose;
 			bam_level = 0;
 		}
-		//Green
-		else if((bam_level_one[xPos][yPos-1] == 3) ){
+		else if ((bam_level_one[1+xPos][yPos] == 3)){
 			bam_level++;
 			if(bam_level == 2){
 				bam_WinOrLose = win;
 			}
 			else{
 				bam_play();
-			}		
+			}
+		}
+	}
+	//UP
+	else if( (((accel_y > -850) && (accel_y < 850) && (accel_x > 650))  && (wireless_mode == 0)) || ((accel_dir == accel_up) && ((wireless_mode) == 1))){
+		//Empty Space
+		if((bam_level_one[xPos-1][yPos] == 0) ){
+			musicFlags[bam_ball_move] = 1;
+			set_LED(xPos,yPos,0x00);
+			set_LED(--xPos,yPos,0x00FFFFFF);
+		}//RED
+		else if((bam_level_one[xPos-1][yPos] == 2)){
+		bam_WinOrLose = lose;
+		bam_level = 0;
+		}
+		else if ((bam_level_one[xPos-1][yPos] == 3)){
+			bam_level++;
+			if(bam_level == 2){
+				bam_WinOrLose = win;
+			}
+			else{
+				bam_play();
+			}
 		}
 		}
 }
