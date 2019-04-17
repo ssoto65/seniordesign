@@ -65,6 +65,15 @@ uint8_t songByte;
 
 uint8_t musicFlags[10];
 #define bam_ball_move 0
+#define bam_wall_hit 3
+#define bb_paddle_hit 4
+
+#define beep_dur 0x1810
+#define block_dur 0x1810
+
+uint16_t beep[6160]; //0x1810
+uint16_t block[6160]; //0x1810
+uint16_t music_output;
 
 unsigned int bytesWritten;
 UINT TEST[1] = {0};
@@ -72,43 +81,6 @@ volatile UINT cnt;
 volatile UINT readTest[15];
 volatile uint32_t songLength = 0;
 volatile uint32_t counter = 0;
-
-uint16_t effects[1347];
-uint16_t music_output;
-
-// 
-// volatile int sine[256] = {0x800,0x832,0x864,0x896,0x8c8,0x8fa,0x92c,0x95e,
-// 	0x98f,0x9c0,0x9f1,0xa22,0xa52,0xa82,0xab1,0xae0,
-// 	0xb0f,0xb3d,0xb6b,0xb98,0xbc5,0xbf1,0xc1c,0xc47,
-// 	0xc71,0xc9a,0xcc3,0xceb,0xd12,0xd39,0xd5f,0xd83,
-// 	0xda7,0xdca,0xded,0xe0e,0xe2e,0xe4e,0xe6c,0xe8a,
-// 	0xea6,0xec1,0xedc,0xef5,0xf0d,0xf24,0xf3a,0xf4f,
-// 	0xf63,0xf76,0xf87,0xf98,0xfa7,0xfb5,0xfc2,0xfcd,
-// 	0xfd8,0xfe1,0xfe9,0xff0,0xff5,0xff9,0xffd,0xffe,
-// 	0xfff,0xffe,0xffd,0xff9,0xff5,0xff0,0xfe9,0xfe1,
-// 	0xfd8,0xfcd,0xfc2,0xfb5,0xfa7,0xf98,0xf87,0xf76,
-// 	0xf63,0xf4f,0xf3a,0xf24,0xf0d,0xef5,0xedc,0xec1,
-// 	0xea6,0xe8a,0xe6c,0xe4e,0xe2e,0xe0e,0xded,0xdca,
-// 	0xda7,0xd83,0xd5f,0xd39,0xd12,0xceb,0xcc3,0xc9a,
-// 	0xc71,0xc47,0xc1c,0xbf1,0xbc5,0xb98,0xb6b,0xb3d,
-// 	0xb0f,0xae0,0xab1,0xa82,0xa52,0xa22,0x9f1,0x9c0,
-// 	0x98f,0x95e,0x92c,0x8fa,0x8c8,0x896,0x864,0x832,
-// 	0x800,0x7cd,0x79b,0x769,0x737,0x705,0x6d3,0x6a1,
-// 	0x670,0x63f,0x60e,0x5dd,0x5ad,0x57d,0x54e,0x51f,
-// 	0x4f0,0x4c2,0x494,0x467,0x43a,0x40e,0x3e3,0x3b8,
-// 	0x38e,0x365,0x33c,0x314,0x2ed,0x2c6,0x2a0,0x27c,
-// 	0x258,0x235,0x212,0x1f1,0x1d1,0x1b1,0x193,0x175,
-// 	0x159,0x13e,0x123,0x10a,0xf2,0xdb,0xc5,0xb0,
-// 	0x9c,0x89,0x78,0x67,0x58,0x4a,0x3d,0x32,
-// 	0x27,0x1e,0x16,0xf,0xa,0x6,0x2,0x1,
-// 	0x0,0x1,0x2,0x6,0xa,0xf,0x16,0x1e,
-// 	0x27,0x32,0x3d,0x4a,0x58,0x67,0x78,0x89,
-// 	0x9c,0xb0,0xc5,0xdb,0xf2,0x10a,0x123,0x13e,
-// 	0x159,0x175,0x193,0x1b1,0x1d1,0x1f1,0x212,0x235,
-// 	0x258,0x27c,0x2a0,0x2c6,0x2ed,0x314,0x33c,0x365,
-// 	0x38e,0x3b8,0x3e3,0x40e,0x43a,0x467,0x494,0x4c2,
-// 	0x4f0,0x51f,0x54e,0x57d,0x5ad,0x5dd,0x60e,0x63f,
-// 	0x670,0x6a1,0x6d3,0x705,0x737,0x769,0x79b,0x7cd};
 
 
 int main(void)
@@ -127,29 +99,14 @@ int main(void)
 	
 	//effects
 	fat_init_effects();
-	for (volatile int ii = 0; ii < 0x543; ii++){
-		errCode = f_read(&file, &TEST, 1, &cnt);
-		effects[ii] = (*TEST << 2);
-	}
-	errCode = f_close(&file);
-	errCode = f_mount(0,0);
-	
 	//menu
 	fat_init_music();
+	
 	slowClock_init();
 	//NVIC_DisableIRQ(PIOA_IRQn);
 	//SD Card // Pin 28/PA16(SS) | Pin 31/PA14(SPCK) | Pin 33/PA13(MOSI) | Pin 41/PA12(MISO) 
 	__enable_irq();        
-	REG_TC0_CCR0 |= TC_CCR_SWTRG;               
-	//__DMB();    
-	//interrupt_init();
-	
-	//clear_matrix();
-	//bb_play();
-	//bam_play();
-	
-	
-	
+	REG_TC0_CCR0 |= TC_CCR_SWTRG;            
 	
 	while(1){
 		while(AorB != buttonA){
@@ -157,7 +114,7 @@ int main(void)
 				display_menu_bb();
 				game = BAM;
 				for (volatile int ind = 0; ind < 0x543; ind++){
-					DAC_write(effects[ind], 0);
+					DAC_write(block[ind], 0);
 					//music_output = (music_output + effects[ii]) >> 1;
 				}
 				while(!(upDown == buttonDOWN)){
@@ -169,7 +126,7 @@ int main(void)
 				display_menu_bam();
 				game = BB;
 				for (volatile int ind = 0; ind < 0x543; ind++){
-					DAC_write(effects[ind], 0);
+					DAC_write(block[ind], 0);
 					//music_output = (music_output + effects[ii]) >> 1;
 				}
 				while(!(upDown == buttonUP)){
@@ -274,18 +231,51 @@ void HardFault_Handler(void)
 }
 
 void fat_init_effects(void){
+	/////////////// BEEP ///////////////
 	errCode = -1;
 
 	while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
 		errCode = f_mount(0, &fatfs);                       //mount drive number 0
 		errCode = f_opendir(&dir, "/");				    	//root directory
 
-		errCode = f_open(&file, "/effects.wav", FA_READ);
+		errCode = f_open(&file, "/beep.wav", FA_READ);
 		if(errCode != FR_OK)
 		result=0;                                       //used as a debugging flag
 		if(errCode == FR_INT_ERR)
 		f_close(&file);
 	}
+	
+	for (volatile int ii = 0; ii < 0x1810; ii++){
+		errCode = f_read(&file, &TEST, 1, &cnt);
+		beep[ii] = (*TEST << 2);
+	}
+	errCode = f_close(&file);
+	errCode = f_mount(0,0);
+	
+	//////////////////////////////////////
+	
+	/////////////// BLOCK ///////////////
+	errCode = -1;
+
+	while (errCode != FR_OK){                               //go until f_open returns FR_OK (function successful)
+		errCode = f_mount(0, &fatfs);                       //mount drive number 0
+		errCode = f_opendir(&dir, "/");				    	//root directory
+
+		errCode = f_open(&file, "/block.wav", FA_READ);
+		if(errCode != FR_OK)
+		result=0;                                       //used as a debugging flag
+		if(errCode == FR_INT_ERR)
+		f_close(&file);
+	}
+	
+	for (volatile int ii = 0; ii < 0x1810; ii++){
+		errCode = f_read(&file, &TEST, 1, &cnt);
+		block[ii] = (*TEST << 2);
+	}
+	errCode = f_close(&file);
+	errCode = f_mount(0,0);
+	//////////////////////////////////////
+	
 }
 
 void fat_init_music(void){
@@ -328,41 +318,43 @@ void TC0_Handler(void){
 		counter+=1;
 	}
 	
-	//READ
-	/*
-	errCode = f_read(&file, &TEST, 1, &cnt);
-	//music_output = *TEST << 2;
-	DAC_write(*TEST << 2, 0);
-	songLength++;
-	if (songLength+1 >=  0x00399DFF){
-		f_lseek(&file, (f_tell(&file) - songLength));
-		songLength = 0;
-	}
-	*/
+	
 	if (counter>bb_refresh){
 		//reset counter
 		counter=0;
 		if ((game == BAM) && play){
 			mazerefresh();
-			if(musicFlags[bam_ball_move] == 1){
-				for (volatile int ind = 0; ind < 0x543; ind++){
-					DAC_write(effects[ind], 0);
-					//music_output = (music_output + effects[ii]) >> 1;
-				}
-				musicFlags[bam_ball_move] = 0;
-			}
 		}
 		else if ((game == BB) && play){
 			ballRefresh();
 			paddleRefresh();
-			if(musicFlags[bam_ball_move] == 1){
-				for (volatile int ind = 0; ind < 0x543; ind++){
-					DAC_write(effects[ind], 0);
-					//music_output = (music_output + effects[ii]) >> 1;
-				}
-				musicFlags[bam_ball_move] = 0;
-			}
 		}
+		
+		if(musicFlags[bam_ball_move] == 1){
+			for (volatile int ind = 0; ind < beep_dur; ind++){
+				//DAC_write(beep[ind], 0);
+				music_output = beep[ind];
+			}
+			musicFlags[bam_ball_move] = 0;
+		}
+		else if((musicFlags[bb_paddle_hit] == 1) || (musicFlags[bam_wall_hit] == 1) ){
+			for (volatile int ind = 0; ind < block_dur; ind++){
+				//DAC_write(block[ind], 0);
+				music_output = block[ind];
+		}
+			musicFlags[bb_paddle_hit] = 0;
+			musicFlags[bam_wall_hit] = 0;
+		}	
+	}
+	//READ
+	errCode = f_read(&file, &TEST, 1, &cnt);
+	//music_output = *TEST << 2;
+	music_output = (music_output + *TEST) >> 1;
+	DAC_write(music_output << 2, 0);
+	songLength++;
+	if (songLength+1 >=  0x00399DFF){
+		f_lseek(&file, (f_tell(&file) - songLength));
+		songLength = 0;
 	}
 	//DAC_write(music_output, 0);
 	__enable_irq();        

@@ -11,9 +11,8 @@
 #define buttonDirstop 7
 
 //Changed to fit orientation of main board
-//Changed to fit orientation of main board
-#define accel_up 8
-#define accel_down 9
+#define accel_down 8
+#define accel_up 9
 #define accel_right 10
 #define accel_left 11
 #define accel_stop 12

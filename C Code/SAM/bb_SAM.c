@@ -26,9 +26,13 @@ extern volatile uint32_t wireless_mode;
 volatile uint8_t bb_WinOrLose;
 volatile uint8_t bb_level = 0;
 
-
-extern uint8_t musicFlags[10];
+uint8_t musicFlags[10];
 #define bam_ball_move 0
+#define game_win 1
+#define game_lose 2
+#define bam_wall_hit 3
+#define bb_paddle_hit 4
+#define bb_brick_hit 5
 
 #define paddleLEFT 1
 #define paddleRIGHT 2
@@ -226,7 +230,9 @@ void ballRefresh(void){
 	
 	//Check Row boundaries
 	if (xPos == 30){
+		//Ball bounce to left //Hit left side of paddle
 		if ((yPos+1 >= paddleIdx) && (yPos+1 <= paddleIdx+2)){
+			musicFlags[bb_paddle_hit] = 1;
 			//trying to fix glitch where ball goes through wall
 			if(paddleIdx <= 3){
 				UpOrDown = Up;
@@ -235,10 +241,14 @@ void ballRefresh(void){
 				UpOrDown = Up;
 				LeftOrRight = Left;
 			}
+		//Ball bounce in same direction its going //Hit center of paddle
 		}else if (yPos+1 == paddleIdx+3){
+			musicFlags[bb_paddle_hit] = 1;
 			UpOrDown = Up;
 		}
+		//Ball bounce to the right //Hit right side of paddle
 		else if ((yPos+1 >= paddleIdx+4) && (yPos+1 <= paddleIdx+5)){
+			musicFlags[bb_paddle_hit] = 1;
 			if(paddleIdx >= 28){
 				UpOrDown = Up;
 				LeftOrRight = Left;
@@ -247,6 +257,7 @@ void ballRefresh(void){
 				LeftOrRight = Right;
 			}
 		}
+		//Ball did not hit paddle
 		else{
 			//endGame();
 			
@@ -291,6 +302,7 @@ void ballRefresh(void){
 	current = bb_level_one[xPos][yPos];
 	//RED Brick hit
 	if (current == 2){
+		musicFlags[bam_ball_move] = 1;
 		UpOrDown ^= 1; //Switch vertical direction
 		if(bb_level_one[xPos][yPos+1] == 0){
 			//turn off led
@@ -330,6 +342,7 @@ void ballRefresh(void){
 	
 	//YELLOW Brick hit
 	if (current == 4){
+		musicFlags[bam_ball_move] = 1;
 		UpOrDown ^= 1; //Switch vertical direction
 		if(bb_level_one[xPos][yPos+1] == 0){
 			//turn led red

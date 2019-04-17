@@ -20,16 +20,22 @@ extern volatile int16_t accel_y;
 extern volatile int16_t accel_z;
 
 //Changed to fit orientation of main board
-#define accel_up 8
-#define accel_down 9
+#define accel_down 8
+#define accel_up 9
 #define accel_right 10
 #define accel_left 11
 
 extern volatile uint8_t accel_dir;
 extern volatile uint32_t wireless_mode;
 
-extern uint8_t musicFlags[10];
+
+uint8_t musicFlags[10];
 #define bam_ball_move 0
+#define game_win 1
+#define game_lose 2
+#define bam_wall_hit 3
+#define bb_paddle_hit 4
+#define bb_brick_hit 5
 
 #define lose 0
 #define win 1
@@ -167,6 +173,7 @@ void mazerefresh(void){
 		}
 			//Red
 		else if((bam_level_one[xPos][yPos-1] == 2) ){
+			musicFlags[bam_wall_hit] = 1;
 			bam_WinOrLose = lose;
 			bam_level = 0;
 		}
@@ -189,6 +196,7 @@ void mazerefresh(void){
 			set_LED(xPos,++yPos,0x00FFFFFF);
 		}
 		else if((bam_level_one[xPos][1+yPos] == 2)){
+		musicFlags[bam_wall_hit] = 1;
 		bam_WinOrLose = lose;
 		bam_level = 0;
 		}
@@ -211,6 +219,7 @@ void mazerefresh(void){
 			set_LED(++xPos,yPos,0x00FFFFFF);
 		}
 		else if((bam_level_one[1+xPos][yPos] == 2)){
+			musicFlags[bam_wall_hit] = 1;
 			bam_WinOrLose = lose;
 			bam_level = 0;
 		}
@@ -233,6 +242,7 @@ void mazerefresh(void){
 			set_LED(--xPos,yPos,0x00FFFFFF);
 		}//RED
 		else if((bam_level_one[xPos-1][yPos] == 2)){
+		musicFlags[bam_wall_hit] = 1;
 		bam_WinOrLose = lose;
 		bam_level = 0;
 		}
